@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import LibraryView from './views/LibraryView.vue'
-import MalthusLesson from './views/MalthusLesson.vue'
+import LessonPlayer from './views/LessonPlayer.vue'
+import { getCourse } from './data/courses'
 
-const lessonOpen = ref(false)
+const activeCourseId = ref<string | null>(null)
+const activeCourse = computed(() => (activeCourseId.value ? getCourse(activeCourseId.value) : null))
 
-function openLesson() {
-  lessonOpen.value = true
+function openLesson(id: string) {
+  activeCourseId.value = id
 }
 
 function closeLesson() {
-  lessonOpen.value = false
+  activeCourseId.value = null
   window.scrollTo({ top: 0, behavior: 'auto' })
 }
 </script>
@@ -18,8 +20,8 @@ function closeLesson() {
 <template>
   <div class="app-shell">
     <Transition name="page" mode="out-in">
-      <LibraryView v-if="!lessonOpen" key="library" @open="openLesson" />
-      <MalthusLesson v-else key="lesson" @back="closeLesson" />
+      <LibraryView v-if="!activeCourse" key="library" @open="openLesson" />
+      <LessonPlayer v-else :key="activeCourse.id" :course="activeCourse" @back="closeLesson" />
     </Transition>
     <div class="grain" aria-hidden="true" />
   </div>

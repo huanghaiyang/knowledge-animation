@@ -3,7 +3,7 @@ import HeroCanvas from '../components/HeroCanvas.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 
 const emit = defineEmits<{
-  open: []
+  open: [id: string]
 }>()
 
 function scrollTo(id: string) {
@@ -12,32 +12,35 @@ function scrollTo(id: string) {
 
 const upcoming = [
   {
+    id: 'logistic',
     index: '002',
     title: '逻辑斯蒂增长',
     field: '生态学 · S 形曲线',
     desc: '当环境容量出现，指数曲线如何被折弯。',
-    tag: '制作中'
+    tag: '已上线'
   },
   {
+    id: 'compound',
     index: '003',
     title: '复利与自然常数 e',
     field: '金融数学 · 极限',
     desc: '连续复利如何把离散的利息，收拢成一条光滑曲线。',
-    tag: '脚本完成'
+    tag: '已上线'
   },
   {
+    id: 'graph',
     index: '004',
     title: '知识关系图谱',
     field: '认知工具 · 图结构',
     desc: '让概念之间的依赖关系，变成可以行走的空间。',
-    tag: '即将上线'
+    tag: '已上线'
   }
 ]
 </script>
 
 <template>
   <div id="top" class="library">
-    <SiteHeader @start="emit('open')" />
+    <SiteHeader @start="emit('open', 'malthus')" />
 
     <main>
       <section class="hero">
@@ -56,7 +59,7 @@ const upcoming = [
               第一课，从一条 1798 年的方程开始。
             </p>
             <div class="hero-actions reveal" style="--delay: 0.24s">
-              <button class="btn-primary" type="button" @click="emit('open')">
+              <button class="btn-primary" type="button" @click="emit('open', 'malthus')">
                 <span>进入第一课</span>
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M4 10h11M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
@@ -71,7 +74,7 @@ const upcoming = [
             </div>
             <div class="hero-facts reveal" style="--delay: 0.32s">
               <div>
-                <strong class="mono">01</strong>
+                <strong class="mono">04</strong>
                 <span>已上线课程</span>
               </div>
               <div>
@@ -129,7 +132,7 @@ const upcoming = [
           </header>
 
           <div class="course-layout">
-            <article class="feature-card" role="button" tabindex="0" @click="emit('open')" @keydown.enter="emit('open')">
+            <article class="feature-card" role="button" tabindex="0" @click="emit('open', 'malthus')" @keydown.enter="emit('open', 'malthus')">
               <div class="feature-art">
                 <div class="art-grid" />
                 <svg class="art-svg" viewBox="0 0 640 270" fill="none" aria-hidden="true">
@@ -199,7 +202,15 @@ const upcoming = [
             </article>
 
             <div class="side-list">
-              <article v-for="item in upcoming" :key="item.index" class="ghost-card">
+              <article
+                v-for="item in upcoming"
+                :key="item.index"
+                class="ghost-card"
+                role="button"
+                tabindex="0"
+                @click="emit('open', item.id)"
+                @keydown.enter="emit('open', item.id)"
+              >
                 <div class="ghost-top">
                   <span class="mono ghost-index">{{ item.index }}</span>
                   <span class="status">{{ item.tag }}</span>
@@ -255,7 +266,7 @@ const upcoming = [
           <p class="about-text">
             ANIMA 是一个以三维动画讲解数理知识的实验场。这里不堆叠术语，只把每一条公式还原成它原本描述的过程。
           </p>
-          <button class="btn-primary about-cta" type="button" @click="emit('open')">
+          <button class="btn-primary about-cta" type="button" @click="emit('open', 'malthus')">
             <span>从马尔萨斯开始</span>
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M4 10h11M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
@@ -880,12 +891,16 @@ const upcoming = [
   border: 1px solid rgba(150, 179, 212, 0.1);
   border-radius: 16px;
   background: linear-gradient(160deg, rgba(10, 16, 26, 0.6), rgba(5, 9, 15, 0.7));
-  transition: border-color 0.4s ease, background 0.4s ease;
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s var(--ease-out);
+  cursor: pointer;
+  outline: none;
 }
 
-.ghost-card:hover {
-  border-color: rgba(150, 179, 212, 0.24);
+.ghost-card:hover,
+.ghost-card:focus-visible {
+  border-color: rgba(116, 240, 194, 0.28);
   background: rgba(13, 21, 33, 0.7);
+  transform: translateY(-3px);
 }
 
 .ghost-top {
@@ -903,24 +918,24 @@ const upcoming = [
 .status {
   padding: 4px 8px;
   border-radius: 5px;
-  background: rgba(150, 179, 212, 0.08);
+  background: rgba(116, 240, 194, 0.09);
   font-size: 9px;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: rgba(186, 255, 235, 0.8);
 }
 
 .ghost-card h3 {
   margin-top: 16px;
   font-size: 19px;
   font-weight: 400;
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 .ghost-card p {
   margin-top: 8px;
   font-size: 11.5px;
   line-height: 1.8;
-  color: var(--faint);
+  color: var(--muted);
 }
 
 .ghost-foot {
@@ -934,9 +949,14 @@ const upcoming = [
   color: var(--faint);
 }
 
+.ghost-card:hover .arrow-dim {
+  color: var(--mint);
+}
+
 .arrow-dim {
   font-size: 13px;
   color: rgba(150, 179, 212, 0.24);
+  transition: color 0.3s ease;
 }
 
 .method {

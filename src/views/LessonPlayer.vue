@@ -1,26 +1,33 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import katex from 'katex'
 import FormulaBlock from '../components/FormulaBlock.vue'
-import {
-  DEFAULT_N0,
-  DEFAULT_R,
-  FOOD0,
-  FOOD_RATE,
-  HORIZON,
-  lessonMeta,
-  lessonSteps
-} from '../data/malthus'
+import type { CourseControl, CourseDefinition, Params, Toggles } from '../data/types'
 import { MalthusScene } from '../three/MalthusScene'
+import { LogisticScene } from '../three/LogisticScene'
+import { CompoundScene } from '../three/CompoundScene'
+import { GraphScene } from '../three/GraphScene'
+import type { LessonScene } from '../three/sceneKit'
+
+const props = defineProps<{
+  course: CourseDefinition
+}>()
 
 const emit = defineEmits<{
   back: []
 }>()
 
+const SCENES: Record<CourseDefinition['scene'], new (canvas: HTMLCanvasElement) => LessonScene> = {
+  malthus: MalthusScene,
+  logistic: LogisticScene,
+  compound: CompoundScene,
+  graph: GraphScene
+}
+
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const stageRef = ref<HTMLElement | null>(null)
 const narrativeRef = ref<HTMLElement | null>(null)
-let scene: MalthusScene | null = null
+let scene: LessonScene | null = null
 
 const index = ref(0)
 const progress = ref(0)
@@ -29,30 +36,37 @@ const replayKey = ref(0)
 let raf = 0
 let lastFrame = 0
 
-const n0 = ref(DEFAULT_N0)
-const r = ref(DEFAULT_R)
-const showLogistic = ref(false)
+const params = reactive<Params>({})
+const toggles = reactive<Toggles>({})
+for (const control of props.course.controls) params[control.key] = control.default
+for (const toggle of props.course.toggles ?? []) toggles[toggle.key] = toggle.default
 
-const step = computed(() => lessonSteps[index.value])
-const isLast = computed(() => index.value === lessonSteps.length - 1)
+const step = computed(() => props.course.steps[index.value])
+const isLast = computed(() => index.value === props.course.steps.length - 1)
 
-const foodFinal = FOOD0 + FOOD_RATE * HORIZON
-const N80 = computed(() => n0.value * Math.exp(r.value * HORIZON))
-const doubling = computed(() => Math.LN2 / r.value)
-const ratio = computed(() => N80.value / foodFinal)
-
-const rPct = computed(() => `${(r.value * 100).toFixed(1)}%`)
-const ratioLabel = computed(() => `${ratio.value.toFixed(2)}×`)
-
-const n0Fill = computed<Record<string, string>>(() => ({
-  '--fill': `${((n0.value - 40) / 260) * 100}%`
+const hud = computed(() => ({
+  cells: props.course.hud.cells.map((cell) => ({
+    label: cell.label,
+    value: cell.value(params, toggles)
+  })),
+  foot: props.course.hud.foot
+    ? {
+        label: props.course.hud.foot.label,
+        value: props.course.hud.foot.value(params, toggles)
+      }
+    : null
 }))
-const rFill = computed<Record<string, string>>(() => ({
-  '--fill': `${((r.value - 0.01) / 0.04) * 100}%`
-}))
+
+const stats = computed(() =>
+  props.course.stats.map((stat) => ({
+    label: stat.label,
+    value: stat.value(params, toggles),
+    warn: stat.warn ? stat.warn(params, toggles) : false
+  }))
+)
 
 const liveFormulaHtml = computed(() =>
-  katex.renderToString(String.raw`N(t) = ${Math.round(n0.value)}\,e^{${r.value.toFixed(3)}t}`, {
+  katex.renderToString(props.course.liveFormula(params, toggles), {
     displayMode: true,
     throwOnError: false,
     trust: true,
@@ -63,43 +77,43 @@ const liveFormulaHtml = computed(() =>
 
 const overall = computed(() => {
   const numerator = index.value + (isLast.value ? 1 : progress.value)
-  return (numerator / lessonSteps.length) * 100
+  return (numerator / props.course.steps.length) * 100
 })
 
 const displayProgress = computed(() => (isLast.value ? 1 : progress.value))
 
-const annotation = computed(() => {
-  switch (step.value.id) {
-    case 'question':
-      return { tag: 'UNKNOWN', text: '未知函数：人口如何随时间变化', tone: 'dim' }
-    case 'assumption':
-      return { tag: 'HYPOTHESIS', text: 'r = b − d，假设为常数', tone: 'mint' }
-    case 'equation':
-      return { tag: 'EQUATION', text: '增长速率正比于当前人口', tone: 'mint' }
-    case 'solution':
-      return { tag: 'SOLUTION', text: '指数解：N₀ · e^rt', tone: 'mint' }
-    case 'series':
-      return { tag: 'TWO SERIES', text: '几何增长对上算术供给', tone: 'amber' }
-    case 'doubling':
-      return {
-        tag: 'DOUBLING',
-        text: `r = ${rPct.value}，每 ${doubling.value.toFixed(1)} 年翻倍`,
-        tone: 'mint'
-      }
-    default:
-      return { tag: 'BOUNDARY', text: '环境容量 K 会折弯曲线', tone: 'violet' }
-  }
-})
+const annotation = computed(
+  () =>
+    props.course.annotationFor?.(index.value, params, toggles) ??
+    step.value.annotation ?? { tag: '', text: '', tone: 'dim' as const }
+)
 
 const pad = (value: number) => String(value).padStart(2, '0')
-const formatInt = (value: number) => Math.round(value).toLocaleString('en-US')
+
+function formatValue(control: CourseControl) {
+  const value = params[control.key]
+  return control.format ? control.format(value) : `${Math.round(value * 1000) / 1000}`
+}
+
+function fillStyle(control: CourseControl) {
+  const ratio = (params[control.key] - control.min) / (control.max - control.min)
+  return { '--fill': `${THREE_CLAMP(ratio) * 100}%` }
+}
+
+function THREE_CLAMP(value: number) {
+  return Math.max(0, Math.min(1, value))
+}
+
+function flipToggle(key: string) {
+  toggles[key] = !toggles[key]
+}
 
 function go(target: number) {
-  const next = Math.max(0, Math.min(lessonSteps.length - 1, target))
+  const next = Math.max(0, Math.min(props.course.steps.length - 1, target))
   index.value = next
   progress.value = 0
   replayKey.value += 1
-  playing.value = lessonSteps[next].duration > 0
+  playing.value = props.course.steps[next].duration > 0
   lastFrame = 0
   scene?.setStep(next, 0)
   nextTick(() => narrativeRef.value?.scrollTo({ top: 0, behavior: 'auto' }))
@@ -126,15 +140,14 @@ function togglePlay() {
 function replayStep() {
   progress.value = 0
   replayKey.value += 1
-  if (lessonSteps[index.value].duration > 0) playing.value = true
+  if (props.course.steps[index.value].duration > 0) playing.value = true
   lastFrame = 0
   scene?.setStep(index.value, 0)
 }
 
 function resetParams() {
-  n0.value = DEFAULT_N0
-  r.value = DEFAULT_R
-  showLogistic.value = false
+  for (const control of props.course.controls) params[control.key] = control.default
+  for (const toggle of props.course.toggles ?? []) toggles[toggle.key] = toggle.default
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -159,11 +172,11 @@ function loop(now: number) {
   const dt = Math.min(now - lastFrame, 60)
   lastFrame = now
 
-  const current = lessonSteps[index.value]
+  const current = props.course.steps[index.value]
   if (playing.value) {
     if (current.duration > 0) {
       progress.value = Math.min(1, progress.value + dt / current.duration)
-      if (progress.value >= 1 && index.value < lessonSteps.length - 1) {
+      if (progress.value >= 1 && index.value < props.course.steps.length - 1) {
         go(index.value + 1)
       } else if (progress.value >= 1) {
         playing.value = false
@@ -177,19 +190,28 @@ function loop(now: number) {
   raf = requestAnimationFrame(loop)
 }
 
-watch([n0, r], () => {
-  scene?.setParams({ n0: n0.value, r: r.value })
-})
+watch(
+  params,
+  () => {
+    scene?.setParams({ ...params })
+  },
+  { deep: true }
+)
 
-watch(showLogistic, (value) => {
-  scene?.setLogistic(value)
-})
+watch(
+  toggles,
+  (next) => {
+    for (const key of Object.keys(next)) scene?.setToggle(key, next[key])
+  },
+  { deep: true }
+)
 
 onMounted(() => {
   if (canvasRef.value) {
-    scene = new MalthusScene(canvasRef.value)
-    scene.setParams({ n0: n0.value, r: r.value })
-    scene.setLogistic(showLogistic.value)
+    const SceneClass = SCENES[props.course.scene]
+    scene = new SceneClass(canvasRef.value)
+    scene.setParams({ ...params })
+    for (const key of Object.keys(toggles)) scene.setToggle(key, toggles[key])
     scene.setStep(0, progress.value)
   }
   window.addEventListener('keydown', onKeydown)
@@ -216,16 +238,16 @@ onBeforeUnmount(() => {
         </button>
 
         <div class="lesson-title">
-          <span class="lesson-no mono">{{ lessonMeta.index }}</span>
+          <span class="lesson-no mono">{{ course.meta.index }}</span>
           <div class="title-stack">
-            <h1>{{ lessonMeta.title }}</h1>
-            <span class="title-meta">{{ lessonMeta.field }} · {{ lessonMeta.year }}</span>
+            <h1>{{ course.meta.title }}</h1>
+            <span class="title-meta">{{ course.meta.field }} · {{ course.meta.year }}</span>
           </div>
         </div>
 
         <nav class="chapter-nav" aria-label="章节导航">
           <button
-            v-for="(item, i) in lessonSteps"
+            v-for="(item, i) in course.steps"
             :key="item.id"
             type="button"
             class="chapter-tab"
@@ -241,7 +263,7 @@ onBeforeUnmount(() => {
         <div class="header-count mono">
           <strong>{{ pad(index + 1) }}</strong>
           <span>/</span>
-          <span>{{ pad(lessonSteps.length) }}</span>
+          <span>{{ pad(course.steps.length) }}</span>
         </div>
       </div>
       <div class="header-progress">
@@ -253,7 +275,7 @@ onBeforeUnmount(() => {
       <canvas ref="canvasRef" class="stage-canvas" />
       <div class="stage-vignette" aria-hidden="true" />
 
-      <div class="stage-id mono">ANIMA · LESSON 001 / 人口学</div>
+      <div class="stage-id mono">{{ course.stageId }}</div>
 
       <div class="annotation" :key="annotation.tag">
         <span class="anno-tag mono">{{ annotation.tag }}</span>
@@ -270,26 +292,14 @@ onBeforeUnmount(() => {
           <span class="mono hud-live">LIVE</span>
         </div>
         <div class="hud-grid">
-          <div class="hud-cell">
-            <span>初始人口 N₀</span>
-            <b class="mono">{{ formatInt(n0) }}</b>
-          </div>
-          <div class="hud-cell">
-            <span>增长率 r</span>
-            <b class="mono">{{ rPct }}</b>
-          </div>
-          <div class="hud-cell">
-            <span>第 80 年 N</span>
-            <b class="mono">{{ formatInt(N80) }}</b>
-          </div>
-          <div class="hud-cell">
-            <span>翻倍时间 T_d</span>
-            <b class="mono">{{ doubling.toFixed(1) }} 年</b>
+          <div v-for="cell in hud.cells" :key="cell.label" class="hud-cell">
+            <span>{{ cell.label }}</span>
+            <b class="mono">{{ cell.value }}</b>
           </div>
         </div>
-        <div class="hud-foot">
-          <span>粮食供给 F(80)</span>
-          <span class="mono">{{ formatInt(foodFinal) }}</span>
+        <div v-if="hud.foot" class="hud-foot">
+          <span>{{ hud.foot.label }}</span>
+          <span class="mono">{{ hud.foot.value }}</span>
         </div>
       </aside>
 
@@ -337,66 +347,44 @@ onBeforeUnmount(() => {
                 <span class="mono explore-label">INTERACTIVE</span>
                 <button class="reset-btn" type="button" @click="resetParams">重置</button>
               </div>
-              <h3>把参数交给你</h3>
+              <h3>{{ course.exploreTitle }}</h3>
               <div class="live-formula" v-html="liveFormulaHtml" />
 
-              <div class="control">
+              <div v-for="control in course.controls" :key="control.key" class="control">
                 <div class="control-head">
-                  <label for="n0-range">初始人口 N₀</label>
-                  <b class="mono">{{ formatInt(n0) }}</b>
+                  <label :for="`${course.id}-${control.key}-range`">{{ control.label }}</label>
+                  <b class="mono">{{ formatValue(control) }}</b>
                 </div>
                 <input
-                  id="n0-range"
-                  v-model.number="n0"
+                  :id="`${course.id}-${control.key}-range`"
+                  v-model.number="params[control.key]"
                   type="range"
-                  min="40"
-                  max="300"
-                  step="10"
-                  :style="n0Fill"
-                />
-              </div>
-
-              <div class="control">
-                <div class="control-head">
-                  <label for="r-range">人均增长率 r</label>
-                  <b class="mono">{{ rPct }}</b>
-                </div>
-                <input
-                  id="r-range"
-                  v-model.number="r"
-                  type="range"
-                  min="0.01"
-                  max="0.05"
-                  step="0.001"
-                  :style="rFill"
+                  :min="control.min"
+                  :max="control.max"
+                  :step="control.step"
+                  :style="fillStyle(control)"
                 />
               </div>
 
               <button
+                v-for="toggle in course.toggles"
+                :key="toggle.key"
                 class="logistic-toggle"
                 type="button"
-                :class="{ on: showLogistic }"
-                @click="showLogistic = !showLogistic"
+                :class="{ on: toggles[toggle.key] }"
+                @click="flipToggle(toggle.key)"
               >
                 <span class="toggle-copy">
-                  <strong>引入环境容量 K</strong>
-                  <em>叠加逻辑斯蒂修正曲线</em>
+                  <strong>{{ toggle.label }}</strong>
+                  <em>{{ toggle.caption }}</em>
                 </span>
                 <span class="switch"><i /></span>
               </button>
 
               <div class="live-stats">
-                <div class="stat">
-                  <span>第 80 年人口</span>
-                  <b class="mono">{{ formatInt(N80) }}</b>
-                </div>
-                <div class="stat">
-                  <span>翻倍时间 T_d</span>
-                  <b class="mono">{{ doubling.toFixed(1) }} 年</b>
-                </div>
-                <div class="stat">
-                  <span>人口 / 粮食</span>
-                  <b class="mono" :class="{ warn: ratio > 1 }">{{ ratioLabel }}</b>
+                <div v-for="stat in stats" :key="stat.label" class="stat">
+                  <span>{{ stat.label }}</span>
+                  <b class="mono" :class="{ warn: stat.warn }">{{ stat.value }}</b>
                 </div>
               </div>
             </section>
@@ -430,7 +418,7 @@ onBeforeUnmount(() => {
           class="tbtn"
           type="button"
           aria-label="下一节"
-          :disabled="index === lessonSteps.length - 1"
+          :disabled="isLast"
           @click="go(index + 1)"
         >
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -443,7 +431,7 @@ onBeforeUnmount(() => {
         <div class="t-progress" aria-hidden="true">
           <i :style="{ width: `${displayProgress * 100}%` }" />
         </div>
-        <span class="t-count mono">{{ pad(index + 1) }}<em>/</em>{{ pad(lessonSteps.length) }}</span>
+        <span class="t-count mono">{{ pad(index + 1) }}<em>/</em>{{ pad(course.steps.length) }}</span>
 
         <button
           v-if="step.duration > 0"

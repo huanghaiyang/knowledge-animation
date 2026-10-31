@@ -170,13 +170,20 @@ export class MalthusScene {
     this.progress = THREE.MathUtils.clamp(progress, 0, 1)
   }
 
-  setParams(params: SceneParams) {
-    const next = { n0: Math.max(1, params.n0), r: Math.max(0.0001, params.r) }
+  setParams(params: Record<string, number>) {
+    const next = {
+      n0: Math.max(1, params.n0 ?? this.params.n0),
+      r: Math.max(0.0001, params.r ?? this.params.r)
+    }
     if (Math.abs(next.n0 - this.params.n0) < 1e-6 && Math.abs(next.r - this.params.r) < 1e-6) {
       return
     }
     this.params = next
     this.dirty = true
+  }
+
+  setToggle(key: string, enabled: boolean) {
+    if (key === 'logistic') this.logisticOn = enabled
   }
 
   setLogistic(enabled: boolean) {

@@ -1,3 +1,7 @@
+import type { CourseControl, CourseDefinition, LessonStep, Params, Toggles } from './types'
+
+export type { ChipTone, FormulaLine, LessonStep, StepChip } from './types'
+
 export const HORIZON = 80
 export const DEFAULT_N0 = 100
 export const DEFAULT_R = 0.028
@@ -12,32 +16,6 @@ export const lessonMeta = {
   duration: '约 8 分钟',
   year: '1798',
   author: 'Thomas Robert Malthus'
-}
-
-export type ChipTone = 'mint' | 'cyan' | 'amber' | 'violet'
-
-export interface StepChip {
-  label: string
-  tone?: ChipTone
-}
-
-export interface FormulaLine {
-  math: string
-  note?: string
-}
-
-export interface LessonStep {
-  id: string
-  nav: string
-  kicker: string
-  title: string
-  lead: string
-  paragraphs: string[]
-  formulas?: FormulaLine[]
-  formulaCaption?: string
-  chips?: StepChip[]
-  insight?: string
-  duration: number
 }
 
 const raw = String.raw
@@ -204,3 +182,90 @@ export const lessonSteps: LessonStep[] = [
     duration: 0
   }
 ]
+
+const int = (value: number) => Math.round(value).toLocaleString('en-US')
+const pct = (value: number) => `${(value * 100).toFixed(1)}%`
+
+const controls: CourseControl[] = [
+  { key: 'n0', label: '初始人口 N₀', min: 40, max: 300, step: 10, default: DEFAULT_N0 },
+  {
+    key: 'r',
+    label: '人均增长率 r',
+    min: 0.01,
+    max: 0.05,
+    step: 0.001,
+    default: DEFAULT_R,
+    format: pct
+  }
+]
+
+export const malthusCourse: CourseDefinition = {
+  id: 'malthus',
+  scene: 'malthus',
+  stageId: 'ANIMA · LESSON 001 / 人口学',
+  meta: lessonMeta,
+  steps: lessonSteps,
+  controls,
+  toggles: [
+    {
+      key: 'logistic',
+      label: '引入环境容量 K',
+      caption: '叠加逻辑斯蒂修正曲线',
+      default: false
+    }
+  ],
+  annotationFor(index: number, params: Params, toggles: Toggles) {
+    switch (lessonSteps[index].id) {
+      case 'question':
+        return { tag: 'UNKNOWN', text: '未知函数：人口如何随时间变化', tone: 'dim' }
+      case 'assumption':
+        return { tag: 'HYPOTHESIS', text: 'r = b − d，假设为常数', tone: 'mint' }
+      case 'equation':
+        return { tag: 'EQUATION', text: '增长速率正比于当前人口', tone: 'mint' }
+      case 'solution':
+        return { tag: 'SOLUTION', text: '指数解：N₀ · e^rt', tone: 'mint' }
+      case 'series':
+        return { tag: 'TWO SERIES', text: '几何增长对上算术供给', tone: 'amber' }
+      case 'doubling':
+        return {
+          tag: 'DOUBLING',
+          text: `r = ${pct(params.r)}，每 ${(Math.LN2 / params.r).toFixed(1)} 年翻倍`,
+          tone: 'mint'
+        }
+      default:
+        return toggles.logistic
+          ? { tag: 'BOUNDARY', text: '环境容量把曲线折成 S 形', tone: 'violet' }
+          : { tag: 'BOUNDARY', text: '环境容量 K 会折弯曲线', tone: 'violet' }
+        }
+  },
+  hud: {
+    cells: [
+      { label: '初始人口 N₀', value: (p) => int(p.n0) },
+      { label: '增长率 r', value: (p) => pct(p.r) },
+      { label: '第 80 年 N', value: (p) => int(p.n0 * Math.exp(p.r * HORIZON)) },
+      { label: '翻倍时间 T_d', value: (p) => `${(Math.LN2 / p.r).toFixed(1)} 年` }
+    ],
+    foot: {
+      label: '粮食供给 F(80)',
+      value: () => int(FOOD0 + FOOD_RATE * HORIZON)
+    }
+  },
+  liveFormula: (p) => String.raw`N(t) = ${Math.round(p.n0)}\,e^{${p.r.toFixed(3)}t}`,
+  stats: [
+    {
+      label: '第 80 年人口',
+      value: (p) => int(p.n0 * Math.exp(p.r * HORIZON))
+    },
+    {
+      label: '翻倍时间 T_d',
+      value: (p) => `${(Math.LN2 / p.r).toFixed(1)} 年`
+    },
+    {
+      label: '人口 / 粮食',
+      value: (p) => `${((p.n0 * Math.exp(p.r * HORIZON)) / (FOOD0 + FOOD_RATE * HORIZON)).toFixed(2)}×`,
+      warn: (p) => (p.n0 * Math.exp(p.r * HORIZON)) / (FOOD0 + FOOD_RATE * HORIZON) > 1
+    }
+  ],
+  exploreTitle: '把参数交给你'
+}
+
