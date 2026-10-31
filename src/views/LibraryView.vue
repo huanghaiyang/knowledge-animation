@@ -34,6 +34,14 @@ const upcoming = [
     field: '认知工具 · 图结构',
     desc: '让概念之间的依赖关系，变成可以行走的空间。',
     tag: '已上线'
+  },
+  {
+    id: 'sir',
+    index: '005',
+    title: '传染病问题',
+    field: '流行病学 · SIR 模型',
+    desc: '一场没有药物的疫情，为什么会自己到达峰值又自行退去。',
+    tag: '已上线'
   }
 ]
 </script>
@@ -74,7 +82,7 @@ const upcoming = [
             </div>
             <div class="hero-facts reveal" style="--delay: 0.32s">
               <div>
-                <strong class="mono">04</strong>
+                <strong class="mono">05</strong>
                 <span>已上线课程</span>
               </div>
               <div>
@@ -879,7 +887,8 @@ const upcoming = [
 
 .side-list {
   display: grid;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 22px;
 }
 
@@ -1121,7 +1130,7 @@ const upcoming = [
     grid-template-columns: 1fr;
   }
   .side-list {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-template-rows: none;
   }
   .hero-inner {

@@ -7,6 +7,7 @@ import { MalthusScene } from '../three/MalthusScene'
 import { LogisticScene } from '../three/LogisticScene'
 import { CompoundScene } from '../three/CompoundScene'
 import { GraphScene } from '../three/GraphScene'
+import { SirScene } from '../three/SirScene'
 import type { LessonScene } from '../three/sceneKit'
 
 const props = defineProps<{
@@ -21,7 +22,8 @@ const SCENES: Record<CourseDefinition['scene'], new (canvas: HTMLCanvasElement) 
   malthus: MalthusScene,
   logistic: LogisticScene,
   compound: CompoundScene,
-  graph: GraphScene
+  graph: GraphScene,
+  sir: SirScene
 }
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
