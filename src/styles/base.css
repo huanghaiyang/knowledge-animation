@@ -1,0 +1,136 @@
+:root {
+  color-scheme: dark;
+
+  --bg: #04070c;
+  --bg-soft: #070b13;
+  --surface: rgba(11, 17, 28, 0.72);
+  --surface-solid: #0b111c;
+  --line: rgba(150, 179, 212, 0.14);
+  --line-strong: rgba(150, 179, 212, 0.28);
+  --text: #e9f0fa;
+  --text-dim: #a7b5c9;
+  --muted: #73829a;
+  --faint: #4c586b;
+
+  --mint: #74f0c2;
+  --mint-soft: rgba(116, 240, 194, 0.16);
+  --cyan: #62c9ff;
+  --amber: #ffbd70;
+  --amber-soft: rgba(255, 189, 112, 0.14);
+  --violet: #b8a2ff;
+  --danger: #ff8492;
+
+  --font-sans: "Inter", "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "Georgia", serif;
+  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --header-h: 74px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(116, 240, 194, 0.24);
+  color: #f4fffb;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 179, 212, 0.18);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 179, 212, 0.3);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
