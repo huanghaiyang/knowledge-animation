@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import katex from 'katex'
 import type { FormulaLine } from '../data/types'
 
@@ -7,6 +7,8 @@ const props = defineProps<{
   lines: FormulaLine[]
   caption?: string
 }>()
+
+const root = ref<HTMLElement | null>(null)
 
 const rendered = computed(() =>
   props.lines.map((line) => ({
@@ -22,10 +24,61 @@ const rendered = computed(() =>
 )
 
 const delayOf = (index: number) => 0.16 + index * 0.58
+
+/** 公式宽度超出容器时等比缩小；过长的公式保留原尺寸并允许横向滚动。 */
+function fitFormulas() {
+  const rootEl = root.value
+  if (!rootEl) return
+
+  const clips = rootEl.querySelectorAll<HTMLElement>('.math-clip')
+  for (const clip of clips) {
+    const inner = clip.querySelector<HTMLElement>('.math-inner')
+    const math = clip.querySelector<HTMLElement>('.katex')
+    if (!inner || !math) continue
+
+    clip.classList.remove('is-scrollable')
+    inner.style.transform = ''
+    inner.style.transformOrigin = ''
+    inner.style.width = ''
+    clip.style.height = ''
+
+    const available = clip.clientWidth
+    const content = math.getBoundingClientRect().width
+    if (!available || content <= available + 1) continue
+
+    const scale = available / content
+    if (scale >= 0.72) {
+      inner.style.transform = `scale(${scale})`
+      inner.style.transformOrigin = 'left top'
+      clip.style.height = `${Math.ceil(inner.offsetHeight * scale) + 6}px`
+    } else {
+      inner.style.width = `${Math.ceil(content)}px`
+      clip.classList.add('is-scrollable')
+    }
+  }
+}
+
+function scheduleFit() {
+  nextTick(() => {
+    fitFormulas()
+    document.fonts?.ready.then(() => fitFormulas()).catch(() => {})
+  })
+}
+
+watch(rendered, scheduleFit, { flush: 'post' })
+
+onMounted(() => {
+  scheduleFit()
+  window.addEventListener('resize', fitFormulas)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', fitFormulas)
+})
 </script>
 
 <template>
-  <div class="formula-block">
+  <div ref="root" class="formula-block">
     <div class="rows">
       <div v-for="(line, i) in rendered" :key="`${i}-${line.math}`" class="row">
         <span v-if="rendered.length > 1" class="row-index mono">
@@ -113,6 +166,28 @@ const delayOf = (index: number) => 0.16 + index * 0.58
   padding: 2px 0 3px;
 }
 
+.math-clip.is-scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(116, 240, 194, 0.32) transparent;
+}
+
+.math-clip.is-scrollable::-webkit-scrollbar {
+  height: 3px;
+}
+
+.math-clip.is-scrollable::-webkit-scrollbar-track {
+  background: rgba(150, 179, 212, 0.08);
+  border-radius: 999px;
+}
+
+.math-clip.is-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(116, 240, 194, 0.32);
+  border-radius: 999px;
+}
+
 .math-inner {
   display: block;
   clip-path: inset(-12% 100% -18% 0);
@@ -121,6 +196,11 @@ const delayOf = (index: number) => 0.16 + index * 0.58
 
 .formula-block :deep(.katex-display) {
   margin: 0;
+  text-align: left;
+}
+
+.formula-block :deep(.katex-display > .katex) {
+  display: inline-block;
   text-align: left;
 }
 
