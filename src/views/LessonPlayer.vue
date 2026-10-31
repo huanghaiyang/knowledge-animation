@@ -8,6 +8,13 @@ import { LogisticScene } from '../three/LogisticScene'
 import { CompoundScene } from '../three/CompoundScene'
 import { GraphScene } from '../three/GraphScene'
 import { SirScene } from '../three/SirScene'
+import { PendulumScene } from '../three/PendulumScene'
+import { PredatorScene } from '../three/PredatorScene'
+import { VectorOpsScene } from '../three/VectorOpsScene'
+import { MomentumScene } from '../three/MomentumScene'
+import { LaplacianScene } from '../three/LaplacianScene'
+import { PolarScene } from '../three/PolarScene'
+import { CylindricalScene } from '../three/CylindricalScene'
 import type { LessonScene } from '../three/sceneKit'
 
 const props = defineProps<{
@@ -23,7 +30,14 @@ const SCENES: Record<CourseDefinition['scene'], new (canvas: HTMLCanvasElement) 
   logistic: LogisticScene,
   compound: CompoundScene,
   graph: GraphScene,
-  sir: SirScene
+  sir: SirScene,
+  pendulum: PendulumScene,
+  predator: PredatorScene,
+  vectorops: VectorOpsScene,
+  momentum: MomentumScene,
+  laplacian: LaplacianScene,
+  polar: PolarScene,
+  cylindrical: CylindricalScene
 }
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -152,6 +166,117 @@ function resetParams() {
   for (const toggle of props.course.toggles ?? []) toggles[toggle.key] = toggle.default
 }
 
+/** 去掉 KaTeX 里的高亮标记，导出为普通 LaTeX。 */
+function stripHighlights(math: string) {
+  const token = '\\htmlClass{'
+  let result = ''
+  let cursor = 0
+
+  const skipGroup = (start: number) => {
+    let index = start
+    let depth = 0
+    while (index < math.length) {
+      if (math[index] === '{') depth += 1
+      else if (math[index] === '}') {
+        depth -= 1
+        if (depth === 0) return index + 1
+      }
+      index += 1
+    }
+    return index
+  }
+
+  while (true) {
+    const start = math.indexOf(token, cursor)
+    if (start === -1) {
+      result += math.slice(cursor)
+      break
+    }
+    result += math.slice(cursor, start)
+    const classEnd = skipGroup(start + token.length - 1)
+    let index = classEnd
+    while (index < math.length && /\s/.test(math[index])) index += 1
+    if (math[index] !== '{') {
+      cursor = index
+      continue
+    }
+    const contentEnd = skipGroup(index)
+    result += math.slice(index + 1, contentEnd - 1)
+    cursor = contentEnd
+  }
+
+  return result
+}
+
+function buildMarkdown() {
+  const course = props.course
+  const lines: string[] = []
+  lines.push(`# ${course.meta.index} · ${course.meta.title}`)
+  if (course.meta.subtitle) lines.push('', course.meta.subtitle)
+  lines.push(
+    '',
+    `> ${course.meta.field}　|　${course.meta.year}　|　${course.meta.duration}`,
+    ''
+  )
+
+  course.steps.forEach((item, i) => {
+    lines.push(`## ${pad(i + 1)} · ${item.nav} — ${item.title}`, '')
+    lines.push(item.lead, '')
+    for (const paragraph of item.paragraphs) lines.push(paragraph, '')
+
+    if (item.formulas?.length) {
+      lines.push('### 公式与推导', '')
+      for (const formula of item.formulas) {
+        lines.push('$$', stripHighlights(formula.math), '$$', '')
+        if (formula.note) lines.push(`> ${formula.note}`, '')
+      }
+    }
+
+    if (item.formulaCaption) lines.push(`*${item.formulaCaption}*`, '')
+    if (item.chips?.length) {
+      for (const chip of item.chips) lines.push(`- ${chip.label}`)
+      lines.push('')
+    }
+    if (item.insight) lines.push(`**洞察：** ${item.insight}`, '')
+    if (item.annotation?.text) lines.push(`**标注：** ${item.annotation.text}`, '')
+  })
+
+  lines.push('## 参数与实验', '')
+  lines.push('| 参数 | 当前值 | 可调范围 |', '| --- | --- | --- |')
+  for (const control of course.controls) {
+    const value = control.format ? control.format(params[control.key]) : params[control.key]
+    lines.push(`| ${control.label} | ${value} | ${control.min} – ${control.max} |`)
+  }
+  for (const toggle of course.toggles ?? []) {
+    lines.push(`| ${toggle.label} | ${toggles[toggle.key] ? '开启' : '关闭'} | 开关 |`)
+  }
+  lines.push('')
+  lines.push('$$', stripHighlights(course.liveFormula(params, toggles)), '$$', '')
+  lines.push(`**${course.exploreTitle}**`, '')
+
+  lines.push('### 实时读数', '')
+  lines.push('| 指标 | 数值 |', '| --- | --- |')
+  for (const stat of stats.value) lines.push(`| ${stat.label} | ${stat.value} |`)
+  for (const cell of hud.value.cells) lines.push(`| ${cell.label} | ${cell.value} |`)
+  if (hud.value.foot) lines.push(`| ${hud.value.foot.label} | ${hud.value.foot.value} |`)
+  lines.push('')
+
+  return lines.join('\n')
+}
+
+function exportMarkdown() {
+  const text = buildMarkdown()
+  const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = `${props.course.meta.index}-${props.course.id}.md`
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1200)
+}
+
 function onKeydown(event: KeyboardEvent) {
   const target = event.target as HTMLElement | null
   if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return
@@ -267,6 +392,13 @@ onBeforeUnmount(() => {
           <span>/</span>
           <span>{{ pad(course.steps.length) }}</span>
         </div>
+
+        <button class="export-btn" type="button" aria-label="导出 Markdown" @click="exportMarkdown">
+          <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M9 2.5v9M5.5 8 9 11.5 12.5 8M3.5 13.5v2h11v-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>导出 MD</span>
+        </button>
       </div>
       <div class="header-progress">
         <i :style="{ width: `${overall}%` }" />
@@ -614,6 +746,31 @@ onBeforeUnmount(() => {
   font-size: 15px;
   font-weight: 500;
   color: var(--text-dim);
+}
+
+.export-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid rgba(116, 240, 194, 0.22);
+  border-radius: 7px;
+  background: rgba(116, 240, 194, 0.05);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: #c9f6e6;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.export-btn:hover {
+  background: rgba(116, 240, 194, 0.12);
+  border-color: rgba(116, 240, 194, 0.42);
+}
+
+.export-btn svg {
+  width: 13px;
+  height: 13px;
 }
 
 .header-progress {

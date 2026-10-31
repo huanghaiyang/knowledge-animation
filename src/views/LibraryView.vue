@@ -44,6 +44,65 @@ const upcoming = [
     tag: '已上线'
   }
 ]
+
+const advanced = [
+  {
+    id: 'pendulum',
+    index: '006',
+    title: '单摆问题',
+    field: '力学 · 非线性振子',
+    desc: '摆角不再小，周期公式还成立吗。',
+    tag: '已上线'
+  },
+  {
+    id: 'predator',
+    index: '007',
+    title: '捕食者—被捕食者',
+    field: '生态学 · Lotka–Volterra',
+    desc: '暴涨与崩溃，被一条闭合的轨道收束。',
+    tag: '已上线'
+  },
+  {
+    id: 'vectorops',
+    index: '008',
+    title: '矢量微分算子',
+    field: '数学 · 场论',
+    desc: '梯度、散度、旋度：场在每一点给出的三种回答。',
+    tag: '已上线'
+  },
+  {
+    id: 'momentum',
+    index: '009',
+    title: '动量算符的本征函数',
+    field: '量子力学 · 算符',
+    desc: '为什么一个复指数波就是动量的本征态。',
+    tag: '已上线'
+  },
+  {
+    id: 'laplacian',
+    index: '010',
+    title: '拉普拉斯算子',
+    field: '数学 · 偏微分方程',
+    desc: '散度作用在梯度上，会得到一个什么样的算子。',
+    tag: '已上线'
+  },
+  {
+    id: 'polar',
+    index: '011',
+    title: '极坐标下的拉普拉斯算子',
+    field: '数学 · 坐标变换',
+    desc: '把链式法则一层层拆开，直到 r 与 θ 完全分离。',
+    tag: '已上线'
+  },
+  {
+    id: 'cylindrical',
+    index: '012',
+    title: '柱坐标下的拉普拉斯算子',
+    field: '数学 · 坐标变换',
+    desc: '半径 r 为什么会出现在度量系数里。',
+    tag: '已上线'
+  }
+]
 </script>
 
 <template>
@@ -82,7 +141,7 @@ const upcoming = [
             </div>
             <div class="hero-facts reveal" style="--delay: 0.32s">
               <div>
-                <strong class="mono">05</strong>
+                <strong class="mono">12</strong>
                 <span>已上线课程</span>
               </div>
               <div>
@@ -230,6 +289,35 @@ const upcoming = [
                   <span class="arrow-dim">↗</span>
                 </div>
               </article>
+            </div>
+
+            <div class="course-more">
+              <header class="more-head">
+                <span class="mono">延伸课程 · 006—012</span>
+                <span>推导全文可在课程页导出为 Markdown</span>
+              </header>
+              <div class="course-grid">
+                <article
+                  v-for="item in advanced"
+                  :key="item.index"
+                  class="ghost-card"
+                  role="button"
+                  tabindex="0"
+                  @click="emit('open', item.id)"
+                  @keydown.enter="emit('open', item.id)"
+                >
+                  <div class="ghost-top">
+                    <span class="mono ghost-index">{{ item.index }}</span>
+                    <span class="status">{{ item.tag }}</span>
+                  </div>
+                  <h3>{{ item.title }}</h3>
+                  <p>{{ item.desc }}</p>
+                  <div class="ghost-foot">
+                    <span class="mono">{{ item.field }}</span>
+                    <span class="arrow-dim">↗</span>
+                  </div>
+                </article>
+              </div>
             </div>
           </div>
         </div>
@@ -890,6 +978,48 @@ const upcoming = [
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
   gap: 22px;
+}
+
+.course-more {
+  grid-column: 1 / -1;
+  margin-top: 40px;
+}
+
+.more-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+.more-head .mono {
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+@media (max-width: 1180px) {
+  .course-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+  .more-head span:last-child {
+    display: none;
+  }
 }
 
 .ghost-card {

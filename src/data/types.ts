@@ -76,7 +76,19 @@ export interface CourseStat {
   warn?: (params: Params, toggles: Toggles) => boolean
 }
 
-export type SceneKind = 'malthus' | 'logistic' | 'compound' | 'graph' | 'sir'
+export type SceneKind =
+  | 'malthus'
+  | 'logistic'
+  | 'compound'
+  | 'graph'
+  | 'sir'
+  | 'pendulum'
+  | 'predator'
+  | 'vectorops'
+  | 'momentum'
+  | 'laplacian'
+  | 'polar'
+  | 'cylindrical'
 
 export interface CourseDefinition {
   id: string
