@@ -4,15 +4,18 @@ import LibraryView from './views/LibraryView.vue'
 import LessonPlayer from './views/LessonPlayer.vue'
 import DerivationView from './views/DerivationView.vue'
 import QuizView from './views/QuizView.vue'
+import BookView from './views/BookView.vue'
+import BookReaderView from './views/BookReaderView.vue'
 import { getCourse } from './data/courses'
 import { quizFor } from './data/quizzes'
 
-type ViewKind = 'library' | 'lesson' | 'notes' | 'quiz'
+type ViewKind = 'library' | 'lesson' | 'notes' | 'quiz' | 'book' | 'book-reader'
 
 const view = ref<ViewKind>('library')
 const activeCourseId = ref<string | null>(null)
 const lessonStep = ref(0)
 const quizReturn = ref<'lesson' | 'notes'>('lesson')
+const bookSectionId = ref('qm-1-1')
 
 const activeCourse = computed(() => (activeCourseId.value ? getCourse(activeCourseId.value) : null))
 const questions = computed(() => (activeCourse.value ? quizFor(activeCourse.value.id) : []))
@@ -65,12 +68,38 @@ function closeQuiz() {
 function rememberStep(index: number) {
   lessonStep.value = index
 }
+
+function openBook() {
+  view.value = 'book'
+  toTop()
+}
+
+function openBookSection(sectionId: string) {
+  bookSectionId.value = sectionId
+  view.value = 'book-reader'
+  toTop()
+}
+
+function closeBook() {
+  view.value = 'library'
+  toTop()
+}
 </script>
 
 <template>
   <div class="app-shell">
     <Transition name="page" mode="out-in">
-      <LibraryView v-if="view === 'library'" key="library" @open="openLesson" />
+      <LibraryView v-if="view === 'library'" key="library" @open="openLesson" @book="openBook" />
+
+      <BookView v-else-if="view === 'book'" key="book" @back="closeBook" @open-section="openBookSection" />
+
+      <BookReaderView
+        v-else-if="view === 'book-reader'"
+        key="book-reader"
+        :section-id="bookSectionId"
+        @back="openBook"
+        @navigate="openBookSection"
+      />
 
       <LessonPlayer
         v-else-if="view === 'lesson' && activeCourse"
@@ -99,7 +128,7 @@ function rememberStep(index: number) {
         @back="closeQuiz"
       />
 
-      <LibraryView v-else key="fallback" @open="openLesson" />
+      <LibraryView v-else key="fallback" @open="openLesson" @book="openBook" />
     </Transition>
     <div class="grain" aria-hidden="true" />
   </div>

@@ -36,6 +36,7 @@ function go(id: string) {
 
       <nav class="nav">
         <button type="button" @click="go('courses')">课程库</button>
+        <button type="button" @click="go('book')">书籍</button>
         <button type="button" @click="go('method')">方法</button>
         <button type="button" @click="go('about')">关于</button>
       </nav>

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import HeroCanvas from '../components/HeroCanvas.vue'
 import SiteHeader from '../components/SiteHeader.vue'
+import { bookChapters, bookMeta } from '../data/book'
 
 const emit = defineEmits<{
   open: [id: string]
+  book: []
 }>()
+
+const pad = (value: number) => String(value).padStart(2, '0')
 
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -143,6 +147,10 @@ const advanced = [
               <div>
                 <strong class="mono">12</strong>
                 <span>已上线课程</span>
+              </div>
+              <div>
+                <strong class="mono">45</strong>
+                <span>书籍精读讲次</span>
               </div>
               <div>
                 <strong class="mono">3D</strong>
@@ -323,10 +331,74 @@ const advanced = [
         </div>
       </section>
 
+      <section id="book" class="section book-section">
+        <div class="section-inner">
+          <header class="section-head">
+            <div class="section-index mono">02 — 书籍阅读</div>
+            <h2>把一本教科书，读成 45 节课。</h2>
+            <p>按原书章节重写讲义，每一章配一个可拨动的实验场景。</p>
+          </header>
+
+          <article class="book-banner" role="button" tabindex="0" @click="emit('book')" @keydown.enter="emit('book')">
+            <div class="banner-copy">
+              <div class="banner-top">
+                <span class="banner-badge mono">NEW · {{ bookMeta.pages }} 页</span>
+                <span class="mono banner-author">[德] {{ bookMeta.author }} · {{ bookMeta.volume }}</span>
+              </div>
+
+              <h3>{{ bookMeta.title }}</h3>
+              <p class="banner-desc">{{ bookMeta.description }}</p>
+
+              <div class="banner-facts">
+                <div>
+                  <strong class="mono">{{ pad(bookMeta.chapterCount) }}</strong>
+                  <span>章</span>
+                </div>
+                <div>
+                  <strong class="mono">{{ bookMeta.sectionCount }}</strong>
+                  <span>节讲义</span>
+                </div>
+                <div>
+                  <strong class="mono">{{ pad(bookMeta.chapterCount) }}</strong>
+                  <span>章实验</span>
+                </div>
+              </div>
+
+              <span class="banner-cta">
+                进入书籍
+                <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+
+            <div class="banner-preview">
+              <div class="preview-head">
+                <span class="mono">TABLE OF CONTENTS</span>
+                <span class="mono">{{ bookMeta.sectionCount }} SECTIONS</span>
+              </div>
+
+              <div class="preview-list">
+                <div v-for="chapter in bookChapters" :key="chapter.id" class="preview-row">
+                  <span class="mono preview-no">{{ pad(chapter.no) }}</span>
+                  <span class="preview-title">{{ chapter.title }}</span>
+                  <span class="mono preview-pages">{{ chapter.pages }}</span>
+                </div>
+              </div>
+
+              <div class="preview-foot">
+                <span class="mono">1.1 → 8.6</span>
+                <span class="mono">每章一个交互实验</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="method" class="section method">
         <div class="section-inner">
           <header class="section-head">
-            <div class="section-index mono">02 — 方法</div>
+            <div class="section-index mono">03 — 方法</div>
             <h2>一节课，三层设计。</h2>
             <p>不是为了好看，而是为了让「理解」这件事有可以抓住的形状。</p>
           </header>
@@ -353,7 +425,7 @@ const advanced = [
 
       <section id="about" class="about">
         <div class="section-inner about-inner">
-          <div class="about-mark mono">03 — ANIMA</div>
+          <div class="about-mark mono">04 — ANIMA</div>
           <blockquote>
             <span class="quote-mark">“</span>
             理解一个公式，<br />
@@ -543,11 +615,12 @@ const advanced = [
 
 .hero-facts {
   display: flex;
-  gap: 40px;
+  flex-wrap: wrap;
+  gap: 26px;
   margin-top: 54px;
   padding-top: 22px;
   border-top: 1px solid rgba(150, 179, 212, 0.09);
-  max-width: 470px;
+  max-width: 560px;
 }
 
 .hero-facts div {
@@ -1098,6 +1171,219 @@ const advanced = [
   transition: color 0.3s ease;
 }
 
+.book-section {
+  border-top: 1px solid rgba(150, 179, 212, 0.07);
+  background:
+    radial-gradient(900px 480px at 78% 12%, rgba(25, 72, 69, 0.13), transparent 68%),
+    linear-gradient(180deg, rgba(9, 15, 24, 0.35), transparent 72%);
+}
+
+.book-banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.06fr 0.94fr;
+  border: 1px solid rgba(150, 179, 212, 0.14);
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 6% 0%, rgba(116, 240, 194, 0.06), transparent 52%),
+    linear-gradient(160deg, rgba(11, 18, 29, 0.86), rgba(5, 9, 15, 0.9));
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.5s var(--ease-out), border-color 0.4s ease, box-shadow 0.5s ease;
+}
+
+.book-banner:hover,
+.book-banner:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(116, 240, 194, 0.3);
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(116, 240, 194, 0.07);
+}
+
+.banner-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 36px 34px;
+}
+
+.banner-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.banner-badge {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(116, 240, 194, 0.09);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: rgba(186, 255, 235, 0.82);
+}
+
+.banner-author {
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+.banner-copy h3 {
+  margin-top: 22px;
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3.2vw, 46px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  color: #f0f7fb;
+}
+
+.banner-desc {
+  margin-top: 14px;
+  max-width: 580px;
+  font-size: 12.5px;
+  line-height: 2;
+  color: var(--muted);
+}
+
+.banner-facts {
+  display: flex;
+  gap: 28px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(150, 179, 212, 0.09);
+  width: 100%;
+}
+
+.banner-facts div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.banner-facts strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mint);
+  letter-spacing: 0.03em;
+}
+
+.banner-facts span {
+  font-size: 10px;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+}
+
+.banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  padding: 10px 18px;
+  border: 1px solid rgba(116, 240, 194, 0.3);
+  border-radius: 999px;
+  background: rgba(116, 240, 194, 0.06);
+  font-size: 12px;
+  color: #d7f8ec;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.book-banner:hover .banner-cta {
+  background: rgba(116, 240, 194, 0.13);
+  border-color: rgba(116, 240, 194, 0.46);
+}
+
+.banner-cta svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.book-banner:hover .banner-cta svg {
+  transform: translateX(4px);
+}
+
+.banner-preview {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 20px 20px 0;
+  padding: 18px 20px 16px;
+  border: 1px solid rgba(150, 179, 212, 0.12);
+  border-radius: 14px;
+  background:
+    radial-gradient(100% 100% at 100% 0%, rgba(116, 240, 194, 0.03), transparent 60%),
+    rgba(4, 8, 14, 0.72);
+}
+
+.preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(150, 179, 212, 0.1);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: var(--faint);
+}
+
+.preview-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 4px;
+}
+
+.preview-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 3px;
+  border-bottom: 1px solid rgba(150, 179, 212, 0.06);
+}
+
+.preview-row:last-child {
+  border-bottom: none;
+}
+
+.preview-no {
+  flex: none;
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: rgba(116, 240, 194, 0.6);
+}
+
+.preview-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+.preview-pages {
+  flex: none;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+}
+
+.preview-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(150, 179, 212, 0.09);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
 .method {
   border-top: 1px solid rgba(150, 179, 212, 0.07);
   background: linear-gradient(180deg, rgba(9, 15, 24, 0.4), transparent 70%);
@@ -1269,6 +1555,12 @@ const advanced = [
   .section-head p {
     text-align: left;
   }
+  .book-banner {
+    grid-template-columns: 1fr;
+  }
+  .banner-preview {
+    margin: 0 20px 20px;
+  }
 }
 
 @media (max-width: 960px) {
@@ -1347,6 +1639,20 @@ const advanced = [
   }
   .feature-art {
     height: 200px;
+  }
+  .banner-copy {
+    padding: 24px 20px 26px;
+  }
+  .banner-copy h3 {
+    font-size: 30px;
+  }
+  .banner-facts {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .banner-preview {
+    margin: 0 14px 14px;
+    padding: 14px 14px 12px;
   }
   .feature-body {
     padding: 22px 20px;
