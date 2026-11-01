@@ -22,7 +22,7 @@ export const ch1Sections: BookSection[] = [
         title: '牛顿力学：轨道与确定性',
         paragraphs: [
           '从伽利略的斜面实验到牛顿的《自然哲学的数学原理》，经典力学建立起一套可以精确预言天体与地面运动的语言。给定质量、初始位置与速度，受力决定加速度，轨迹便唯一地展开。',
-          '拉格朗日与哈密顿随后把力学改写成能量语言。哈密顿量 H = p²/2m + V(x) 同时包含动能与势能，相空间中的一条曲线就是体系全部的历史。这套形式后来成为量子力学最自然的出发点。'
+          '拉格朗日与哈密顿随后把力学改写成能量语言。哈密顿量 $H = p^2/2m + V(x)$ 同时包含动能与势能，相空间中的一条曲线就是体系全部的历史。这套形式后来成为量子力学最自然的出发点。'
         ],
         formulas: [
           { math: raw`m\frac{d^2\mathbf r}{dt^2}=\mathbf F(\mathbf r,\dot{\mathbf r},t)`, note: '牛顿第二定律：确定性轨道的起点' },
@@ -127,8 +127,8 @@ export const ch1Sections: BookSection[] = [
       '作用量子 h 的引入，是量子力学真正的起点。'
     ],
     exercise: {
-      question: '把普朗克谱在 hν ≪ kT 时展开，验证它退化为瑞利—金斯公式。',
-      hint: '利用 e^x − 1 ≈ x，令 x = hν/kT，则 1/(e^x−1) ≈ kT/hν，代回即得 8πν²kT/c³。'
+      question: '把普朗克谱在 $h\\nu \\ll k_{\\mathrm B}T$ 时展开，验证它退化为瑞利—金斯公式。',
+      hint: '利用 $e^x - 1 \\approx x$，令 $x = h\\nu/k_{\\mathrm B}T$，则 $1/(e^x-1) \\approx k_{\\mathrm B}T/h\\nu$，代回即得 $8\\pi\\nu^2 k_{\\mathrm B}T/c^3$。'
     }
   },
   {

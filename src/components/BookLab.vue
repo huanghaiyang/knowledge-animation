@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import InlineMath from './InlineMath.vue'
 import type { BookLab } from '../data/book/types'
 import type { CourseControl, Params, Toggles } from '../data/types'
 import { QuantumLabScene } from '../three/QuantumLabScene'
@@ -113,7 +114,7 @@ onBeforeUnmount(() => {
     </header>
 
     <div class="lab-title-row">
-      <h2>{{ lab.title }}</h2>
+      <h2><InlineMath :text="lab.title" /></h2>
       <span class="drag-hint mono">拖拽旋转 · 双击复位</span>
     </div>
 
@@ -126,12 +127,12 @@ onBeforeUnmount(() => {
       <div class="stage-badge mono">LIVE / THREE.JS</div>
     </div>
 
-    <p class="lab-caption">{{ lab.caption }}</p>
+    <p class="lab-caption"><InlineMath :text="lab.caption" /></p>
 
     <div class="readouts">
       <div v-for="cell in readouts" :key="cell.label" class="readout">
-        <span>{{ cell.label }}</span>
-        <b class="mono">{{ cell.value }}</b>
+        <span><InlineMath :text="cell.label" /></span>
+        <b class="mono"><InlineMath :text="String(cell.value)" /></b>
       </div>
     </div>
 
@@ -162,8 +163,8 @@ onBeforeUnmount(() => {
           @click="flipToggle(toggle.key)"
         >
           <span class="toggle-copy">
-            <strong>{{ toggle.label }}</strong>
-            <em>{{ toggle.caption }}</em>
+            <strong><InlineMath :text="toggle.label" /></strong>
+            <em><InlineMath :text="toggle.caption" /></em>
           </span>
           <span class="switch"><i /></span>
         </button>
@@ -172,7 +173,7 @@ onBeforeUnmount(() => {
 
     <footer class="lab-note">
       <span class="mono">OBSERVE</span>
-      <p>{{ note }}</p>
+      <p><InlineMath :text="note" /></p>
     </footer>
   </section>
 </template>

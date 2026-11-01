@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import katex from 'katex'
+import InlineMath from './InlineMath.vue'
 import type { FormulaLine } from '../data/types'
 
 const props = defineProps<{
@@ -130,13 +131,13 @@ onBeforeUnmount(() => {
             class="note"
             :style="{ animationDelay: `${delayOf(i) + 0.3}s` }"
           >
-            {{ line.note }}
+            <InlineMath :text="line.note" />
           </span>
         </div>
       </div>
     </div>
     <p v-if="caption" class="caption" :style="{ animationDelay: `${delayOf(rendered.length - 1) + 0.5}s` }">
-      {{ caption }}
+      <InlineMath :text="caption" />
     </p>
 
     <Teleport to="body">
@@ -147,7 +148,7 @@ onBeforeUnmount(() => {
             <button type="button" class="modal-close" @click="closePreview">关闭</button>
           </header>
           <div class="modal-math" v-html="previewLine.html" />
-          <p v-if="previewLine.note" class="modal-note">{{ previewLine.note }}</p>
+          <p v-if="previewLine.note" class="modal-note"><InlineMath :text="previewLine.note" /></p>
         </div>
       </div>
     </Teleport>

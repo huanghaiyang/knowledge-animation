@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import BookLab from '../components/BookLab.vue'
 import FormulaBlock from '../components/FormulaBlock.vue'
+import InlineMath from '../components/InlineMath.vue'
 import { bookChapters, bookMeta, bookNeighbors, chapterOfSection, getBookSection, labsForSection } from '../data/book'
 
 const props = defineProps<{
@@ -189,12 +190,12 @@ onMounted(scrollActiveToc)
                 <span class="paper-pages mono">原书 pp. {{ section.pages }}</span>
               </div>
 
-              <p class="paper-abstract">{{ section.abstract }}</p>
+              <p class="paper-abstract"><InlineMath :text="section.abstract" /></p>
 
               <div class="key-ideas">
                 <div v-for="(idea, index) in section.keyIdeas" :key="idea" class="idea-card">
                   <span class="mono idea-no">{{ String(index + 1).padStart(2, '0') }}</span>
-                  <p>{{ idea }}</p>
+                  <p><InlineMath :text="idea" /></p>
                 </div>
               </div>
             </header>
@@ -206,15 +207,17 @@ onMounted(scrollActiveToc)
             >
               <header class="beat-head">
                 <span class="beat-index mono">{{ pad(index + 1) }}</span>
-                <h2>{{ beat.title }}</h2>
+                <h2><InlineMath :text="beat.title" /></h2>
               </header>
 
               <div class="beat-body">
-                <p v-for="(paragraph, pIndex) in beat.paragraphs" :key="pIndex">{{ paragraph }}</p>
+                <p v-for="(paragraph, pIndex) in beat.paragraphs" :key="pIndex">
+                  <InlineMath :text="paragraph" />
+                </p>
                 <FormulaBlock v-if="beat.formulas?.length" :lines="beat.formulas" />
                 <div v-if="beat.insight" class="insight">
                   <span class="mono">INSIGHT</span>
-                  <p>{{ beat.insight }}</p>
+                  <p><InlineMath :text="beat.insight" /></p>
                 </div>
               </div>
             </section>
@@ -225,7 +228,7 @@ onMounted(scrollActiveToc)
                 <h3>本讲结论</h3>
               </header>
               <ul>
-                <li v-for="item in section.takeaways" :key="item">{{ item }}</li>
+                <li v-for="item in section.takeaways" :key="item"><InlineMath :text="item" /></li>
               </ul>
             </section>
 
@@ -234,12 +237,12 @@ onMounted(scrollActiveToc)
                 <span class="mono">EXERCISE</span>
                 <h3>留给自己的问题</h3>
               </header>
-              <p class="exercise-q">{{ section.exercise.question }}</p>
+              <p class="exercise-q"><InlineMath :text="section.exercise.question" /></p>
               <button class="hint-btn" type="button" @click="hintOpen = !hintOpen">
                 {{ hintOpen ? '收起提示' : '查看提示' }}
               </button>
               <Transition name="hint">
-                <p v-if="hintOpen" class="hint">{{ section.exercise.hint }}</p>
+                <p v-if="hintOpen" class="hint"><InlineMath :text="section.exercise.hint" /></p>
               </Transition>
             </section>
 

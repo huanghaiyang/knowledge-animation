@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { allBookSections, bookChapters, bookMeta, labsForSection } from '../data/book'
+import InlineMath from '../components/InlineMath.vue'
 
 const emit = defineEmits<{
   back: []
@@ -59,7 +60,7 @@ function scrollToChapters() {
               <span class="mono">{{ bookMeta.authorNote }}</span>
             </p>
 
-            <p class="hero-desc">{{ bookMeta.description }}</p>
+            <p class="hero-desc"><InlineMath :text="bookMeta.description" /></p>
 
             <div class="hero-actions">
               <button class="btn-primary" type="button" @click="emit('open-section', firstSectionId())">
@@ -192,7 +193,7 @@ function scrollToChapters() {
           <header class="section-head">
             <div class="section-index mono">01 — 章节目录</div>
             <h2>八章，四十五节。</h2>
-            <p>{{ bookMeta.approach }}</p>
+            <p><InlineMath :text="bookMeta.approach" /></p>
           </header>
 
           <div class="chapter-grid">
@@ -203,8 +204,8 @@ function scrollToChapters() {
               </header>
 
               <h3>{{ chapter.title }}</h3>
-              <p class="chapter-tagline">{{ chapter.tagline }}</p>
-              <p class="chapter-abstract">{{ chapter.abstract }}</p>
+              <p class="chapter-tagline"><InlineMath :text="chapter.tagline" /></p>
+              <p class="chapter-abstract"><InlineMath :text="chapter.abstract" /></p>
 
               <div class="chapter-sections">
                 <button
