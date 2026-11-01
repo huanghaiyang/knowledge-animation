@@ -369,8 +369,8 @@ export const cylindricalCourse: CourseDefinition = {
       value: (p) => `${Math.round(p.mode)}`
     },
     {
-      label: 'Bessel 参数 kr',
-      value: (p) => fmt(p.mode + 1, 1)
+      label: '探针处 u = rᵐz',
+      value: (p) => fmt(Math.pow(p.radius, Math.round(p.mode)) * p.height)
     }
   ],
   exploreTitle: '把半径、模式与高度交给你'

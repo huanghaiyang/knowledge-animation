@@ -153,7 +153,7 @@ export const polarSteps: LessonStep[] = [
     paragraphs: [
       '对 y 方向重复同样的四步：乘积法则、系数求导、链式展开、合并同类项。∂²y 与 ∂²x 只差符号：交叉项 ∂r∂θ 取正，∂θ 项取负。',
       '把 ∂²x 与 ∂²y 相加，两个交叉项恰好互为相反数；两个 ∂θ 项也互为相反数，一起消失。这不是巧合，而是坐标系正交性的代数表现。',
-      '剩下的只有 ∂r²、∂r、∂θ² 三块：∂²r 的系数是 cos²θ + sin²θ = 1，∂r 的系数是 (sin²θ + cos²θ)/r = 1/r，∂θ² 的系数是 1/r²。',
+      '剩下的只有 ∂r²、∂r、∂θ² 三块：∂r² 的系数是 cos²θ + sin²θ = 1，∂r 的系数是 (sin²θ + cos²θ)/r = 1/r，∂θ² 的系数是 1/r²。',
       '于是 Δ = ∂r² + (1/r)∂r + (1/r²)∂θ²。径向的 1/r 与角向的 1/r² 正是极坐标度量的痕迹。',
       '用尺度因子可以写同一件事：h_r = 1、h_θ = r。代入一般公式后展开，结果与逐项相加完全一致。'
     ],
@@ -197,9 +197,9 @@ export const polarSteps: LessonStep[] = [
     paragraphs: [
       '判断一个函数是否调和，只要把它写成 r、θ，代入刚得到的算子。',
       'f = ln r 看起来不平凡，但 ∂r ln r = 1/r，∂r² ln r = −1/r²，两项刚好抵消，所以 Δ(ln r) = 0。',
-      'f = r^n 给出 Δ = n² r^{n−2}；只有 n = 0 与 n = 1 时它才调和，对应常数与线性函数。',
+      'f = r^n 给出 Δ = n² r^{n−2}；纯径向的 r^n 只有 n = 0 时调和，对应常数。线性函数 x、y 虽然调和，但它们是 r cosθ 与 r sinθ，并不是纯径向的 r。',
       'f = r^m cos(mθ) 的径向与角向贡献逐项相消，因此对任意整数 m 都是调和函数，它也是分离变量解的基本砖块。',
-      '令 u = R(r)Θ(θ) 代入 Δu = 0，乘以 r² 后得到欧拉方程 r²R″ + rR′ − m²R = 0，其解正是 r^m 与 r^{−m}。'
+      '令 u = R(r)Θ(θ) 代入 Δu = 0，乘以 r² 后得到欧拉方程 r²R″ + rR′ − m²R = 0，其解正是 r^m 与 r^{−m}（m = 0 时为 1 与 ln r）。'
     ],
     formulas: [
       {
@@ -222,7 +222,7 @@ export const polarSteps: LessonStep[] = [
     formulaCaption: '调和判定：Δf = 0　m 为整数时角向函数周期闭合',
     chips: [
       { label: 'ln r 调和', tone: 'mint' },
-      { label: 'rⁿ 仅 n = 0, 1', tone: 'amber' },
+      { label: 'rⁿ 仅 n = 0 调和', tone: 'amber' },
       { label: 'rᵐ cos mθ 调和', tone: 'violet' }
     ],
     insight: '最像「极坐标产物」的函数，反而最容易满足 Δf = 0。',
@@ -333,7 +333,7 @@ export const polarCourse: CourseDefinition = {
       value: (p) => fmt(p.m * p.m * Math.pow(p.r0, p.m - 2))
     },
     {
-      label: '调和判定',
+      label: '角向函数 rᵐcos mθ 调和判定',
       value: () => 'Δf = 0 · 是'
     },
     {

@@ -140,7 +140,7 @@ export const lessonSteps: LessonStep[] = [
     lead: '指数增长有一个残酷的性质——「翻一倍」所需的时间，是常数。',
     paragraphs: [
       '令人口变为原来的两倍，两边取对数，就能解出翻倍时间 T_d。它只与增长率 r 有关，与人口规模毫无关系。',
-      '若 r = 2.8%，人口每 24.7 年翻一倍。四个翻倍之后是十六倍，八个翻倍之后就是两百五十倍。'
+      '若 r = 2.8%，人口每 24.8 年翻一倍。四个翻倍之后是十六倍，八个翻倍之后就是 256 倍。'
     ],
     formulas: [
       {
@@ -152,7 +152,7 @@ export const lessonSteps: LessonStep[] = [
         note: '翻倍时间'
       }
     ],
-    formulaCaption: '示例：r = 2.8% 时，T_d ≈ 24.7 年',
+    formulaCaption: '示例：r = 2.8% 时，T_d ≈ 24.8 年',
     insight: '从 1 亿到 2 亿，和从 10 亿到 20 亿，需要的时间完全一样。',
     duration: 22000
   },

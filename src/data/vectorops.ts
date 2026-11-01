@@ -110,7 +110,7 @@ export const vectorOpsSteps: LessonStep[] = [
     ],
     formulas: [
       {
-        math: raw`\operatorname{div}\mathbf{F} = \lim_{V\to 0}\frac{1}{V}\oiint_{\partial V}\mathbf{F}\cdot d\mathbf{S}`,
+        math: raw`\operatorname{div}\mathbf{F} = \lim_{V\to 0}\frac{1}{V}\iint_{\partial V}\mathbf{F}\cdot d\mathbf{S}`,
         note: '通量密度：单位体积的净流出量'
       },
       {

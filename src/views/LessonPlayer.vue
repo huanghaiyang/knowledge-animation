@@ -19,10 +19,14 @@ import type { LessonScene } from '../three/sceneKit'
 
 const props = defineProps<{
   course: CourseDefinition
+  startIndex?: number
 }>()
 
 const emit = defineEmits<{
   back: []
+  notes: []
+  quiz: []
+  step: [index: number]
 }>()
 
 const SCENES: Record<CourseDefinition['scene'], new (canvas: HTMLCanvasElement) => LessonScene> = {
@@ -45,7 +49,8 @@ const stageRef = ref<HTMLElement | null>(null)
 const narrativeRef = ref<HTMLElement | null>(null)
 let scene: LessonScene | null = null
 
-const index = ref(0)
+const safeStart = Math.min(Math.max(props.startIndex ?? 0, 0), props.course.steps.length - 1)
+const index = ref(safeStart)
 const progress = ref(0)
 const playing = ref(true)
 const replayKey = ref(0)
@@ -132,6 +137,7 @@ function go(target: number) {
   playing.value = props.course.steps[next].duration > 0
   lastFrame = 0
   scene?.setStep(next, 0)
+  emit('step', next)
   nextTick(() => narrativeRef.value?.scrollTo({ top: 0, behavior: 'auto' }))
 }
 
@@ -143,6 +149,7 @@ function togglePlay() {
     playing.value = true
     lastFrame = 0
     scene?.setStep(0, 0)
+    emit('step', 0)
     return
   }
   playing.value = !playing.value
@@ -278,6 +285,7 @@ function exportMarkdown() {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (document.querySelector('.formula-modal')) return
   const target = event.target as HTMLElement | null
   if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return
   if (event.code === 'Space') {
@@ -339,7 +347,7 @@ onMounted(() => {
     scene = new SceneClass(canvasRef.value)
     scene.setParams({ ...params })
     for (const key of Object.keys(toggles)) scene.setToggle(key, toggles[key])
-    scene.setStep(0, progress.value)
+    scene.setStep(index.value, progress.value)
   }
   window.addEventListener('keydown', onKeydown)
   raf = requestAnimationFrame(loop)
@@ -391,6 +399,23 @@ onBeforeUnmount(() => {
           <strong>{{ pad(index + 1) }}</strong>
           <span>/</span>
           <span>{{ pad(course.steps.length) }}</span>
+        </div>
+
+        <div class="study-actions">
+          <button class="study-btn notes-btn" type="button" @click="emit('notes')">
+            <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M4 2.8h7.2L14.5 6v9.2H4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+              <path d="M11 2.8v3.4h3.5M6.4 9h5.2M6.4 11.8h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>完整推导</span>
+          </button>
+          <button class="study-btn" type="button" @click="emit('quiz')">
+            <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <circle cx="9" cy="9" r="6.2" stroke="currentColor" stroke-width="1.2" />
+              <path d="m6.2 9.2 2 2 3.7-4.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>自测</span>
+          </button>
         </div>
 
         <button class="export-btn" type="button" aria-label="导出 Markdown" @click="exportMarkdown">
@@ -526,7 +551,7 @@ onBeforeUnmount(() => {
         </Transition>
       </aside>
 
-      <div class="shortcut-hint mono">SPACE 暂停 / ← → 切换</div>
+      <div class="shortcut-hint mono">SPACE 暂停 / ← → 切换 / 拖拽旋转 · 双击复位</div>
 
       <div class="transport" role="group" aria-label="播放控制">
         <button class="tbtn" type="button" aria-label="上一节" :disabled="index === 0" @click="go(index - 1)">
@@ -746,6 +771,49 @@ onBeforeUnmount(() => {
   font-size: 15px;
   font-weight: 500;
   color: var(--text-dim);
+}
+
+.study-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.study-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid rgba(150, 179, 212, 0.18);
+  border-radius: 7px;
+  background: rgba(150, 179, 212, 0.045);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.study-btn:hover {
+  color: var(--text);
+  border-color: rgba(150, 179, 212, 0.4);
+  background: rgba(150, 179, 212, 0.09);
+}
+
+.study-btn.notes-btn {
+  color: #c9f6e6;
+  border-color: rgba(116, 240, 194, 0.22);
+  background: rgba(116, 240, 194, 0.05);
+}
+
+.study-btn.notes-btn:hover {
+  border-color: rgba(116, 240, 194, 0.42);
+  background: rgba(116, 240, 194, 0.12);
+}
+
+.study-btn svg {
+  width: 13px;
+  height: 13px;
 }
 
 .export-btn {
@@ -1545,6 +1613,13 @@ input[type='range']::-moz-range-thumb {
   .title-meta,
   .chapter-nav {
     display: none;
+  }
+  .study-btn span,
+  .export-btn span {
+    display: none;
+  }
+  .study-btn {
+    padding: 7px 9px;
   }
   .header-count {
     margin-left: auto;

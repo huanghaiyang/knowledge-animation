@@ -285,7 +285,7 @@ export const predatorSteps: LessonStep[] = [
       },
       {
         math: raw`\quad - \beta\gamma y + \beta\delta xy + \alpha\gamma - \alpha\delta x = 0`,
-        note: '代入 ẏ 后逐项相消'
+        note: '两半相加，逐项相消为零'
       },
       {
         math: raw`V(x(t),y(t)) \equiv V(x_0,y_0)`,

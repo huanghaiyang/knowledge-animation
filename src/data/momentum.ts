@@ -185,7 +185,7 @@ export const momentumSteps: LessonStep[] = [
       },
       { math: raw`|\psi_k(x,t)|^2 = |A|^2`, note: '定态：概率密度不随时间变化' }
     ],
-    formulaCaption: 'k：波数　amp：可视振幅　ω：角频率',
+    formulaCaption: 'k：波数　amp：可视振幅　ω：角频率（演示取 ℏ = m = 1）',
     insight: '先动 k，再看波长与本征值如何联动；最后打开投影，把复数拆成两条实波。',
     annotation: { tag: 'BOUNDARY', text: '螺旋的螺距就是波长，旋转的快慢就是相位', tone: 'amber' },
     duration: 0

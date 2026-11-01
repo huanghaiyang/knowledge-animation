@@ -23,6 +23,23 @@ const rendered = computed(() =>
   }))
 )
 
+const previewIndex = ref<number | null>(null)
+const previewLine = computed(() =>
+  previewIndex.value === null ? null : rendered.value[previewIndex.value]
+)
+
+function openPreview(index: number) {
+  previewIndex.value = index
+}
+
+function closePreview() {
+  previewIndex.value = null
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') previewIndex.value = null
+}
+
 const delayOf = (index: number) => 0.16 + index * 0.58
 
 /** 公式宽度超出容器时等比缩小；过长的公式保留原尺寸并允许横向滚动。 */
@@ -41,6 +58,7 @@ function fitFormulas() {
     inner.style.transformOrigin = ''
     inner.style.width = ''
     clip.style.height = ''
+    clip.title = '点击放大公式'
 
     const available = clip.clientWidth
     const content = math.getBoundingClientRect().width
@@ -52,8 +70,13 @@ function fitFormulas() {
       inner.style.transformOrigin = 'left top'
       clip.style.height = `${Math.ceil(inner.offsetHeight * scale) + 6}px`
     } else {
-      inner.style.width = `${Math.ceil(content)}px`
+      // 过长的公式先缩到可读下限，再允许横向拖动，避免整行被裁切。
+      inner.style.transform = 'scale(0.72)'
+      inner.style.transformOrigin = 'left top'
+      inner.style.width = `${Math.ceil(content * 0.72)}px`
+      clip.style.height = `${Math.ceil(inner.offsetHeight * 0.72) + 6}px`
       clip.classList.add('is-scrollable')
+      clip.title = '公式较宽：可左右拖动查看，点击可放大'
     }
   }
 }
@@ -70,10 +93,12 @@ watch(rendered, scheduleFit, { flush: 'post' })
 onMounted(() => {
   scheduleFit()
   window.addEventListener('resize', fitFormulas)
+  window.addEventListener('keydown', onKeydown)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', fitFormulas)
+  window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -85,7 +110,14 @@ onBeforeUnmount(() => {
           {{ String(i + 1).padStart(2, '0') }}
         </span>
         <div class="main">
-          <div class="math-clip">
+          <div
+            class="math-clip"
+            role="button"
+            tabindex="0"
+            title="点击放大公式"
+            @click="openPreview(i)"
+            @keydown.enter="openPreview(i)"
+          >
             <span
               class="math-inner"
               :style="{ animationDelay: `${delayOf(i)}s` }"
@@ -106,6 +138,19 @@ onBeforeUnmount(() => {
     <p v-if="caption" class="caption" :style="{ animationDelay: `${delayOf(rendered.length - 1) + 0.5}s` }">
       {{ caption }}
     </p>
+
+    <Teleport to="body">
+      <div v-if="previewLine" class="formula-modal" @click.self="closePreview">
+        <div class="modal-card">
+          <header class="modal-head">
+            <span class="mono">FORMULA {{ String((previewIndex ?? 0) + 1).padStart(2, '0') }}</span>
+            <button type="button" class="modal-close" @click="closePreview">关闭</button>
+          </header>
+          <div class="modal-math" v-html="previewLine.html" />
+          <p v-if="previewLine.note" class="modal-note">{{ previewLine.note }}</p>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -164,6 +209,88 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: 2px 0 3px;
+  cursor: zoom-in;
+  outline: none;
+}
+
+.math-clip:focus-visible {
+  box-shadow: 0 0 0 1px rgba(116, 240, 194, 0.42);
+  border-radius: 4px;
+}
+
+.formula-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgba(3, 7, 12, 0.74);
+  backdrop-filter: blur(14px);
+}
+
+.modal-card {
+  width: min(920px, 94vw);
+  max-height: 82vh;
+  overflow: auto;
+  padding: 18px 24px 20px;
+  border: 1px solid rgba(116, 240, 194, 0.22);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(116, 240, 194, 0.07), transparent 55%),
+    linear-gradient(155deg, rgba(13, 21, 33, 0.97), rgba(7, 12, 20, 0.96));
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.9);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+}
+
+.modal-close {
+  padding: 5px 10px;
+  border: 1px solid rgba(150, 179, 212, 0.2);
+  border-radius: 6px;
+  font-size: 10.5px;
+  color: var(--text-dim);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text);
+  border-color: rgba(150, 179, 212, 0.42);
+}
+
+.modal-math {
+  overflow-x: auto;
+  padding: 14px 2px 6px;
+}
+
+.modal-math :deep(.katex-display) {
+  margin: 0;
+  text-align: left;
+}
+
+.modal-math :deep(.katex-display > .katex) {
+  display: inline-block;
+  text-align: left;
+}
+
+.modal-math :deep(.katex) {
+  font-size: 1.12rem;
+}
+
+.modal-note {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
 }
 
 .math-clip.is-scrollable {

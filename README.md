@@ -40,29 +40,29 @@ npm run preview  # 预览构建结果
 
 ```
 src/
-├── App.vue                 # 课程库 / 播放器切换
+├── App.vue                 # 课程库 / 播放器 / 完整推导 / 自测四视图
 ├── views/
 │   ├── LibraryView.vue     # 课程库首页
-│   └── LessonPlayer.vue    # 通用课程播放器
+│   ├── LessonPlayer.vue    # 通用课程播放器
+│   ├── DerivationView.vue  # Markdown 完整推导讲义
+│   └── QuizView.vue        # 自测与判分
 ├── components/
-│   ├── FormulaBlock.vue    # 公式逐行动画
+│   ├── FormulaBlock.vue    # 公式逐行动画、自适应缩放、点击放大
 │   ├── HeroCanvas.vue      # 首页三维生长曲线
 │   └── SiteHeader.vue
+├── content/                # 12 份 Markdown 讲义（完整推导 + 例题 + 习题 + 证明）
 ├── data/
 │   ├── types.ts            # 课程数据模型
 │   ├── courses.ts          # 课程注册表
-│   ├── malthus.ts          # 001 课程定义
-│   ├── logistic.ts         # 002
-│   ├── compound.ts         # 003
-│   ├── graph.ts            # 004
-│   └── sir.ts              # 005
+│   ├── notes.ts            # 讲义加载（import.meta.glob）
+│   ├── quizzes.ts          # 题库加载
+│   ├── quizzes/            # 12 份自测题（每课 6 题）
+│   └── 001–012 课程定义
+├── utils/
+│   └── markdown.ts         # 自研 Markdown + KaTeX 渲染器
 └── three/
-    ├── sceneKit.ts         # 公共舞台（渲染、运镜、工具）
-    ├── MalthusScene.ts
-    ├── LogisticScene.ts
-    ├── CompoundScene.ts
-    ├── GraphScene.ts
-    └── SirScene.ts
+    ├── sceneKit.ts         # 公共舞台（渲染、运镜、拖拽旋转、工具）
+    └── 12 个场景类
 ```
 
 ## 播放器交互
@@ -70,8 +70,11 @@ src/
 - 章节导航：点击顶部标签跳转，或使用 `←` / `→`
 - 播放控制：`Space` 暂停 / 继续，底部按钮可重播本节
 - 实验模式：在每课最后一节拖动参数滑块、切换开关，曲线与读数即时更新
-- 导出讲义：点击右上角「导出 MD」，把当前课程全部章节、公式推导、参数与实时读数保存为 Markdown 文件
-- 返回课程库：点击左上角按钮或按 `Esc`
+- 三维舞台：在画面上按住鼠标横向/纵向拖动，可绕目标点旋转视角；双击复位；`Esc` 返回课程库
+- 公式显示：公式超出容器时等比缩放，过宽时可横向拖动；点击任意公式可放大查看，`Esc` 关闭
+- 完整推导：右上角「完整推导」进入该课的 Markdown 讲义，含逐步推导、例题、习题解答与公式/引理证明，可按目录跳转或导出 MD
+- 自测：右上角「自测」进入该课 6 道单选题，即时判分并给出解析与错题回顾
+- 导出讲义：在讲义页点击「导出 MD」，把该课完整推导保存为 Markdown 文件
 
 ## 扩展一节新课
 
@@ -84,6 +87,7 @@ src/
    setToggle(key: string, value: boolean): void
    dispose(): void
    ```
-4. 在 `src/data/courses.ts` 注册课程，并在 `LessonPlayer.vue` 的 `SCENES` 映射中挂上场景类。
+4. 在 `src/data/courses.ts` 注册课程，并在 `LessonPlayer.vue` 的 `SCENES` 映射中挂上场景类；
+5. 新建 `src/content/<courseId>.md` 讲义与 `src/data/quizzes/<courseId>.ts` 题库，二者按文件名为课程自动挂载。
 
 播放器会自动从课程定义生成章节、HUD、公式、滑块与读数，无需修改模板。

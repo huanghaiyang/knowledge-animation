@@ -21,7 +21,7 @@ export const logisticSteps: LessonStep[] = [
   {
     id: 'question',
     nav: '问题',
-    kicker: '序 · 1840',
+    kicker: '序 · 1838',
     title: '指数增长，会在哪里停下？',
     lead: '如果一片草原上的兔子每年增长 6%，它们迟早会占满整个星球——除非有什么东西先让增长慢下来。',
     paragraphs: [

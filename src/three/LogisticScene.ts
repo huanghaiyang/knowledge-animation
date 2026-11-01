@@ -449,7 +449,7 @@ export class LogisticScene implements LessonScene {
     this.growthAlpha = THREE.MathUtils.damp(this.growthAlpha, targets.growth, 5, dt)
 
     if (this.ghostLine) {
-      this.ghostLine.material.opacity = this.ghostAlpha * 0.55
+      (this.ghostLine.material as THREE.LineBasicMaterial).opacity = this.ghostAlpha * 0.55
     }
     for (const child of this.ghostGroup.children) {
       if (child instanceof THREE.Sprite) child.material.opacity = this.ghostAlpha * 0.8

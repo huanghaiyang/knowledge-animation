@@ -46,10 +46,20 @@ export class StageRig {
   private readonly pointerTarget = new THREE.Vector2()
   private readonly look = new THREE.Vector3()
   private readonly lookTarget = new THREE.Vector3()
+  private readonly basePos = new THREE.Vector3()
+  private readonly orbitOffset = new THREE.Vector3()
+  private readonly spherical = new THREE.Spherical()
   private readonly clock = new THREE.Clock()
   private readonly resizeObserver: ResizeObserver
   private presetIndex = 0
   private raf = 0
+  private dragging = false
+  private dragX = 0
+  private dragY = 0
+  private orbitYaw = 0
+  private orbitPitch = 0
+  private orbitYawTarget = 0
+  private orbitPitchTarget = 0
   private update: ((dt: number, elapsed: number) => void) | null = null
 
   constructor(
@@ -94,6 +104,7 @@ export class StageRig {
     this.look.set(...first.look)
     this.lookTarget.set(...first.look)
     this.camera.position.set(...first.pos)
+    this.basePos.copy(this.camera.position)
     this.camera.lookAt(this.look)
 
     this.resizeObserver = new ResizeObserver(() => this.resize())
@@ -102,6 +113,12 @@ export class StageRig {
 
     this.host.addEventListener('pointermove', this.onPointerMove)
     this.host.addEventListener('pointerleave', this.onPointerLeave)
+    this.canvas.addEventListener('pointerdown', this.onCanvasPointerDown)
+    this.canvas.addEventListener('dblclick', this.onCanvasDoubleClick)
+    window.addEventListener('pointermove', this.onWindowPointerMove)
+    window.addEventListener('pointerup', this.onWindowPointerUp)
+    this.canvas.style.cursor = 'grab'
+    this.canvas.style.touchAction = 'none'
   }
 
   add(group: THREE.Object3D) {
@@ -272,6 +289,10 @@ export class StageRig {
     this.resizeObserver.disconnect()
     this.host.removeEventListener('pointermove', this.onPointerMove)
     this.host.removeEventListener('pointerleave', this.onPointerLeave)
+    this.canvas.removeEventListener('pointerdown', this.onCanvasPointerDown)
+    this.canvas.removeEventListener('dblclick', this.onCanvasDoubleClick)
+    window.removeEventListener('pointermove', this.onWindowPointerMove)
+    window.removeEventListener('pointerup', this.onWindowPointerUp)
     this.scene.traverse((object) => {
       const mesh = object as THREE.Mesh
       if (mesh.geometry) mesh.geometry.dispose()
@@ -357,6 +378,39 @@ export class StageRig {
     this.pointerTarget.set(0, 0)
   }
 
+  private readonly onCanvasPointerDown = (event: PointerEvent) => {
+    if (event.button !== 0) return
+    this.dragging = true
+    this.dragX = event.clientX
+    this.dragY = event.clientY
+    this.canvas.style.cursor = 'grabbing'
+  }
+
+  private readonly onWindowPointerMove = (event: PointerEvent) => {
+    if (!this.dragging) return
+    const dx = event.clientX - this.dragX
+    const dy = event.clientY - this.dragY
+    this.dragX = event.clientX
+    this.dragY = event.clientY
+    this.orbitYawTarget += dx * 0.006
+    this.orbitPitchTarget = THREE.MathUtils.clamp(
+      this.orbitPitchTarget + dy * 0.004,
+      -0.55,
+      0.7
+    )
+  }
+
+  private readonly onWindowPointerUp = () => {
+    if (!this.dragging) return
+    this.dragging = false
+    this.canvas.style.cursor = 'grab'
+  }
+
+  private readonly onCanvasDoubleClick = () => {
+    this.orbitYawTarget = 0
+    this.orbitPitchTarget = 0
+  }
+
   private readonly loop = () => {
     const dt = Math.min(this.clock.getDelta(), 0.05)
     const elapsed = this.clock.elapsedTime
@@ -374,20 +428,20 @@ export class StageRig {
 
     this.pointer.lerp(this.pointerTarget, 0.04)
 
-    this.camera.position.x = THREE.MathUtils.damp(
-      this.camera.position.x,
+    this.basePos.x = THREE.MathUtils.damp(
+      this.basePos.x,
       preset.pos[0] + offset + this.pointer.x * 0.22,
       2.6,
       dt
     )
-    this.camera.position.y = THREE.MathUtils.damp(
-      this.camera.position.y,
+    this.basePos.y = THREE.MathUtils.damp(
+      this.basePos.y,
       preset.pos[1] - this.pointer.y * 0.16,
       2.6,
       dt
     )
-    this.camera.position.z = THREE.MathUtils.damp(
-      this.camera.position.z,
+    this.basePos.z = THREE.MathUtils.damp(
+      this.basePos.z,
       preset.pos[2] * pull,
       2.6,
       dt
@@ -401,6 +455,22 @@ export class StageRig {
     this.look.x = THREE.MathUtils.damp(this.look.x, this.lookTarget.x, 2.6, dt)
     this.look.y = THREE.MathUtils.damp(this.look.y, this.lookTarget.y, 2.6, dt)
     this.look.z = THREE.MathUtils.damp(this.look.z, this.lookTarget.z, 2.6, dt)
+
+    this.orbitYaw = THREE.MathUtils.damp(this.orbitYaw, this.orbitYawTarget, 5, dt)
+    this.orbitPitch = THREE.MathUtils.damp(this.orbitPitch, this.orbitPitchTarget, 5, dt)
+
+    this.orbitOffset.copy(this.basePos).sub(this.look)
+    if (this.orbitYaw || this.orbitPitch) {
+      this.spherical.setFromVector3(this.orbitOffset)
+      this.spherical.theta += this.orbitYaw
+      this.spherical.phi = THREE.MathUtils.clamp(
+        this.spherical.phi + this.orbitPitch,
+        0.55,
+        2.2
+      )
+      this.orbitOffset.setFromSpherical(this.spherical)
+    }
+    this.camera.position.copy(this.look).add(this.orbitOffset)
     this.camera.lookAt(this.look)
   }
 }
