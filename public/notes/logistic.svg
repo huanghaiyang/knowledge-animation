@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" role="img">
+<rect x="1" y="1" width="758" height="378" rx="14" fill="#060b12" stroke="rgba(150,179,212,0.18)" stroke-width="1"/>
+<text x="96" y="42" fill="#e7f1fb" font-size="15" font-weight="500" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">逻辑斯蒂增长：S 形曲线</text><text x="96" y="62" fill="#7f95ab" font-size="11.5" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">dN/dt = rN(1 − N/K)：增长率随拥挤程度线性下降</text>
+<line x1="96" y1="306" x2="676" y2="306" stroke="rgba(150,179,212,0.42)" stroke-width="1.2"/>
+<line x1="96" y1="306" x2="96" y2="64" stroke="rgba(150,179,212,0.42)" stroke-width="1.2"/>
+<line x1="96" y1="70" x2="676" y2="70" stroke="#d5c8ff" stroke-width="1.6" stroke-dasharray="6 6"/>
+<path d="M96 294.2 L101.8 293 L107.6 291.7 L113.4 290.3 L119.2 288.8 L125 287.2 L130.8 285.3 L136.6 283.4 L142.4 281.3 L148.2 279 L154 276.5 L159.8 273.8 L165.6 270.9 L171.4 267.8 L177.2 264.5 L183 261 L188.8 257.2 L194.6 253.2 L200.4 249 L206.2 244.6 L212 239.9 L217.8 235.1 L223.6 230 L229.4 224.8 L235.2 219.4 L241 213.8 L246.8 208.1 L252.6 202.4 L258.4 196.5 L264.2 190.6 L270 184.7 L275.8 178.8 L281.6 173 L287.4 167.2 L293.2 161.6 L299 156 L304.8 150.7 L310.6 145.4 L316.4 140.4 L322.2 135.6 L328 130.9 L333.8 126.5 L339.6 122.3 L345.4 118.4 L351.2 114.6 L357 111.1 L362.8 107.8 L368.6 104.8 L374.4 101.9 L380.2 99.3 L386 96.8 L391.8 94.5 L397.6 92.4 L403.4 90.4 L409.2 88.7 L415 87 L420.8 85.5 L426.6 84.1 L432.4 82.8 L438.2 81.7 L444 80.6 L449.8 79.6 L455.6 78.8 L461.4 78 L467.2 77.2 L473 76.6 L478.8 75.9 L484.6 75.4 L490.4 74.9 L496.2 74.4 L502 74 L507.8 73.6 L513.6 73.3 L519.4 73 L525.2 72.7 L531 72.5 L536.8 72.2 L542.6 72 L548.4 71.8 L554.2 71.7 L560 71.5 L565.8 71.4 L571.6 71.2 L577.4 71.1 L583.2 71 L589 70.9 L594.8 70.8 L600.6 70.7 L606.4 70.7 L612.2 70.6 L618 70.6 L623.8 70.5 L629.6 70.5 L635.4 70.4 L641.2 70.4 L647 70.3 L652.8 70.3 L658.6 70.3 L664.4 70.2 L670.2 70.2 L676 70.2" fill="none" stroke="#74f0c2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="156.8" y1="299.9" x2="376.8" y2="76.1" stroke="#ffc983" stroke-width="1.8" stroke-dasharray="6 5"/>
+<circle cx="266.8" cy="188" r="4.5" fill="#060b12" stroke="#ffc983" stroke-width="2"/>
+<text x="680" y="74" fill="#d5c8ff" font-size="14" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">K</text>
+<text x="90" y="192" fill="#d5c8ff" font-size="12" font-weight="400" text-anchor="end" font-family="'Microsoft YaHei','PingFang SC',sans-serif">K/2</text>
+<text x="74" y="310" fill="#7f95ab" font-size="12" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">0</text>
+<text x="280.8" y="172" fill="#ffc983" font-size="12" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">拐点 · 最大增速 rK/4</text>
+<text x="680" y="324" fill="#7f95ab" font-size="13" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">t</text>
+<text x="66" y="82" fill="#7f95ab" font-size="13" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">N</text>
+<text x="96" y="350" fill="#7f95ab" font-size="11.5" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">解为 N(t) = K / [1 + ((K/N₀) − 1) e⁻ʳᵗ]，从下方单调逼近 K。</text>
+</svg>

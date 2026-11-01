@@ -243,25 +243,29 @@ export class StageRig {
     text: string,
     options: { color: string; scale: number; fontSize?: number; weight?: number }
   ) {
-    const fontSize = options.fontSize ?? 48
+    const fontSize = options.fontSize ?? 44
     const weight = options.weight ?? 500
     const key = `${text}|${fontSize}|${weight}|${options.color}`
     let texture = this.textCache.get(key)
 
     if (!texture) {
-      const canvas = document.createElement('canvas')
       const font = `${weight} ${fontSize}px "Microsoft YaHei", "PingFang SC", sans-serif`
       const measure = document.createElement('canvas').getContext('2d')!
       measure.font = font
-      const width = Math.ceil(measure.measureText(text).width) + 36
+      const textWidth = Math.ceil(measure.measureText(text).width)
+      const padding = 16
+      // 短标签（刻度、单字母）也保留足够的横向留白，避免精灵被拉得过高而与邻近文字重叠。
+      const width = Math.max(textWidth + padding * 2, Math.round(fontSize * 3.2))
+      const height = Math.ceil(fontSize * 1.9)
+      const canvas = document.createElement('canvas')
       canvas.width = width
-      canvas.height = 96
+      canvas.height = height
       const ctx = canvas.getContext('2d')!
       ctx.font = font
-      ctx.textAlign = 'left'
+      ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillStyle = options.color
-      ctx.fillText(text, 18, 50)
+      ctx.fillText(text, width / 2, height / 2)
 
       texture = new THREE.CanvasTexture(canvas)
       texture.colorSpace = THREE.SRGBColorSpace
@@ -278,8 +282,11 @@ export class StageRig {
       toneMapped: false
     })
     const sprite = new THREE.Sprite(material)
-    const aspect = (texture.image as HTMLCanvasElement).width / (texture.image as HTMLCanvasElement).height
-    sprite.scale.set(options.scale, options.scale / aspect, 1)
+    const image = texture.image as HTMLCanvasElement
+    const aspect = image.width / image.height
+    // 统一缩小 10%，给相邻标签留出间距。
+    const worldWidth = options.scale * 0.9
+    sprite.scale.set(worldWidth, worldWidth / aspect, 1)
     sprite.renderOrder = 20
     return sprite
   }
@@ -392,9 +399,10 @@ export class StageRig {
     const dy = event.clientY - this.dragY
     this.dragX = event.clientX
     this.dragY = event.clientY
-    this.orbitYawTarget += dx * 0.006
+    // 与 OrbitControls 一致：向右拖动让场景向右转，向下拖动让视角抬高。
+    this.orbitYawTarget -= dx * 0.006
     this.orbitPitchTarget = THREE.MathUtils.clamp(
-      this.orbitPitchTarget + dy * 0.004,
+      this.orbitPitchTarget - dy * 0.004,
       -0.55,
       0.7
     )

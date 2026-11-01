@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" role="img">
+<rect x="1" y="1" width="758" height="378" rx="14" fill="#060b12" stroke="rgba(150,179,212,0.18)" stroke-width="1"/>
+<text x="96" y="42" fill="#e7f1fb" font-size="15" font-weight="500" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">知识图谱的跳数分层</text><text x="96" y="62" fill="#7f95ab" font-size="11.5" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">把边视为无向，从中心节点做 BFS：深度 d 的节点在第 d 层点亮</text>
+<line x1="380" y1="190" x2="272" y2="111.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="380" y1="190" x2="509.6" y2="152.6" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="380" y1="190" x2="250.4" y2="213.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="380" y1="190" x2="441.2" y2="305.6" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="272" y1="111.8" x2="185.6" y2="67.6" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="272" y1="111.8" x2="354.8" y2="43.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="354.8" y1="43.8" x2="462.8" y2="64.2" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="509.6" y1="152.6" x2="272" y2="111.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="509.6" y1="152.6" x2="455.6" y2="247.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="250.4" y1="213.8" x2="340.4" y2="292" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="340.4" y1="292" x2="441.2" y2="305.6" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<line x1="441.2" y1="305.6" x2="354.8" y2="43.8" stroke="rgba(150,179,212,0.34)" stroke-width="1.4"/>
+<circle cx="380" cy="190" r="9" fill="#74f0c2" stroke="#74f0c2" stroke-width="1"/>
+<text x="380" y="207" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">知识图谱</text>
+<text x="380" y="224" fill="#7f95ab" font-size="10" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">起点</text>
+<circle cx="272" cy="111.8" r="7" fill="#ffc983" stroke="#ffc983" stroke-width="1"/>
+<text x="272" y="128.8" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">马尔萨斯模型</text>
+<circle cx="185.6" cy="67.6" r="7" fill="#8fe8ff" stroke="#8fe8ff" stroke-width="1"/>
+<text x="185.6" y="84.6" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">微分方程</text>
+<circle cx="354.8" cy="43.8" r="7" fill="#8fe8ff" stroke="#8fe8ff" stroke-width="1"/>
+<text x="354.8" y="60.8" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">指数增长</text>
+<circle cx="462.8" cy="64.2" r="7" fill="#d5c8ff" stroke="#d5c8ff" stroke-width="1"/>
+<text x="462.8" y="81.2" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">倍增时间</text>
+<circle cx="509.6" cy="152.6" r="7" fill="#ffc983" stroke="#ffc983" stroke-width="1"/>
+<text x="509.6" y="169.6" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">逻辑斯蒂增长</text>
+<circle cx="455.6" cy="247.8" r="7" fill="#8fe8ff" stroke="#8fe8ff" stroke-width="1"/>
+<text x="455.6" y="264.8" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">环境容量 K</text>
+<circle cx="250.4" cy="213.8" r="7" fill="#ffc983" stroke="#ffc983" stroke-width="1"/>
+<text x="250.4" y="230.8" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">极限</text>
+<circle cx="340.4" cy="292" r="7" fill="#8fe8ff" stroke="#8fe8ff" stroke-width="1"/>
+<text x="340.4" y="309" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">自然常数 e</text>
+<circle cx="441.2" cy="305.6" r="7" fill="#ffc983" stroke="#ffc983" stroke-width="1"/>
+<text x="441.2" y="322.6" fill="#c8d6e4" font-size="11" font-weight="400" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif">连续复利</text>
+<text x="96" y="350" fill="#74f0c2" font-size="11" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">● 深度 0</text><text x="180" y="350" fill="#ffc983" font-size="11" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">● 深度 1</text><text x="264" y="350" fill="#8fe8ff" font-size="11" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">● 深度 2</text><text x="348" y="350" fill="#d5c8ff" font-size="11" font-weight="400" text-anchor="start" font-family="'Microsoft YaHei','PingFang SC',sans-serif">● 深度 3</text>
+</svg>

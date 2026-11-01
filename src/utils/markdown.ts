@@ -32,6 +32,10 @@ function renderTex(expression: string, displayMode: boolean) {
 function inline(text: string) {
   return text
     .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(
+      /!\[([^\]]*)\]\(([^)]+)\)/g,
+      '<img src="$2" alt="$1" loading="lazy" />'
+    )
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
@@ -127,6 +131,17 @@ export function renderMarkdown(source: string): string {
       continue
     }
 
+    const figure = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+    if (figure) {
+      output.push(
+        `<figure><img src="${figure[2]}" alt="${figure[1]}" loading="lazy" /><figcaption>${inline(
+          figure[1]
+        )}</figcaption></figure>`
+      )
+      index += 1
+      continue
+    }
+
     if (trimmed.startsWith('```')) {
       const code: string[] = []
       index += 1
@@ -218,6 +233,7 @@ export function renderMarkdown(source: string): string {
         next.startsWith('```') ||
         next.startsWith('>') ||
         next.startsWith('|') ||
+        /^!\[[^\]]*\]\([^)]+\)$/.test(next) ||
         /^- /.test(next) ||
         /^\d+\. /.test(next) ||
         /^(@@D\d+@@)$/.test(next) ||

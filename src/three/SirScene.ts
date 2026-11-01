@@ -406,7 +406,7 @@ export class SirScene implements LessonScene {
       fontSize: 42,
       weight: 500
     })
-    label.position.set(x + 0.12, y + 0.3, 0.08)
+    label.position.set(x + 0.12, y + 0.62, 0.08)
     this.peakLabel = label
     this.peakGroup.add(label)
   }

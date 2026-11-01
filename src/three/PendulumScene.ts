@@ -382,7 +382,7 @@ export class PendulumScene implements LessonScene {
       { t: tn, label: 'T', color: COLOR.ghost }
     ]
 
-    for (const mark of marks) {
+    for (const [index, mark] of marks.entries()) {
       if (mark.t > this.tMax) continue
       const x = this.xOf(mark.t)
       this.markerGroup.add(
@@ -397,7 +397,8 @@ export class PendulumScene implements LessonScene {
         scale: 0.46,
         fontSize: 44
       })
-      label.position.set(x, PLOT_Y1 + 0.16, 0.05)
+      // 小角周期 T₀ 与精确周期 T 在接近时几乎重合，两条标签上下错开，避免互相压字。
+      label.position.set(x, PLOT_Y1 + 0.16 + index * 0.22, 0.05)
       this.markerGroup.add(label)
     }
   }

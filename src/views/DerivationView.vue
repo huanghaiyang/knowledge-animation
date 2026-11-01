@@ -23,7 +23,10 @@ function scrollTo(id: string) {
 
 function exportNotes() {
   if (!source.value) return
-  const blob = new Blob([source.value], { type: 'text/markdown;charset=utf-8' })
+  // 导出的 Markdown 脱离应用后仍能按站点地址找到示意图。
+  const origin = window.location.origin
+  const markdown = source.value.replace(/\]\(\/notes\//g, `](${origin}/notes/`)
+  const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url
@@ -284,6 +287,27 @@ function exportNotes() {
   color: var(--mint);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.paper :deep(figure) {
+  margin: 24px 0 22px;
+}
+
+.paper :deep(figure img) {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(150, 179, 212, 0.16);
+  border-radius: 12px;
+  background: #060b12;
+}
+
+.paper :deep(figcaption) {
+  margin-top: 9px;
+  text-align: center;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
 .paper :deep(code) {
