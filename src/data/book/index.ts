@@ -1,5 +1,6 @@
-import type { BookChapter, BookMeta, BookSection } from './types'
+import type { BookChapter, BookLab, BookMeta, BookSection } from './types'
 import { bookLabs } from './labs'
+import { sectionLabMap } from './sectionLabs'
 import { ch1Sections } from './ch1'
 import { ch2Sections } from './ch2'
 import { ch3Sections } from './ch3'
@@ -156,6 +157,12 @@ export function bookNeighbors(sectionId: string) {
   }
 }
 
+export function labsForSection(sectionId: string): BookLab[] {
+  const sectionLabs = sectionLabMap[sectionId]
+  if (sectionLabs?.length) return sectionLabs
+  return [chapterOfSection(sectionId).lab]
+}
+
 export function labForSection(sectionId: string) {
-  return chapterOfSection(sectionId).lab
+  return labsForSection(sectionId)[0]
 }

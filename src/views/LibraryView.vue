@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import HeroCanvas from '../components/HeroCanvas.vue'
 import SiteHeader from '../components/SiteHeader.vue'
-import { bookChapters, bookMeta } from '../data/book'
+import { allBookSections, bookChapters, bookMeta, labsForSection } from '../data/book'
 
 const emit = defineEmits<{
   open: [id: string]
@@ -9,6 +9,7 @@ const emit = defineEmits<{
 }>()
 
 const pad = (value: number) => String(value).padStart(2, '0')
+const labCount = allBookSections.reduce((sum, section) => sum + labsForSection(section.id).length, 0)
 
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -336,7 +337,7 @@ const advanced = [
           <header class="section-head">
             <div class="section-index mono">02 — 书籍阅读</div>
             <h2>把一本教科书，读成 45 节课。</h2>
-            <p>按原书章节重写讲义，每一章配一个可拨动的实验场景。</p>
+            <p>按原书章节重写讲义，每一节配两个可拨动的实验场景。</p>
           </header>
 
           <article class="book-banner" role="button" tabindex="0" @click="emit('book')" @keydown.enter="emit('book')">
@@ -359,8 +360,8 @@ const advanced = [
                   <span>节讲义</span>
                 </div>
                 <div>
-                  <strong class="mono">{{ pad(bookMeta.chapterCount) }}</strong>
-                  <span>章实验</span>
+                  <strong class="mono">{{ labCount }}</strong>
+                  <span>个实验</span>
                 </div>
               </div>
 
@@ -387,8 +388,8 @@ const advanced = [
               </div>
 
               <div class="preview-foot">
-                <span class="mono">1.1 → 8.6</span>
-                <span class="mono">每章一个交互实验</span>
+                <span class="mono">1.1 → 8.8</span>
+                <span class="mono">每节两个交互实验</span>
               </div>
             </div>
           </article>

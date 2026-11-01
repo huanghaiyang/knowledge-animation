@@ -16,7 +16,24 @@ const MODE_LABEL: Record<BookLab['mode'], string> = {
   oscillator: '量子谐振子',
   coherent: '相干态',
   operator: '动量算符',
-  hydrogen: '氢原子电子云'
+  hydrogen: '氢原子电子云',
+  spectrum: '黑体辐射谱',
+  photoelectric: '光电效应',
+  levels: '能级阶梯',
+  bohr: '玻尔跃迁',
+  uncertainty: '不确定性',
+  finitewell: '有限深势阱',
+  step: '阶跃散射',
+  delta: 'δ 势场',
+  doublewell: '双势阱',
+  molecular: '分子势能',
+  angular: '球谐函数',
+  ladder: '升降算符',
+  radial: '径向波函数',
+  resonance: '共振腔',
+  linear: '线性势',
+  chain: '共轭链',
+  stm: '隧道显微镜'
 }
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)

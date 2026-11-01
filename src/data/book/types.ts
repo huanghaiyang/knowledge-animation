@@ -15,6 +15,23 @@ export type LabMode =
   | 'coherent'
   | 'operator'
   | 'hydrogen'
+  | 'spectrum'
+  | 'photoelectric'
+  | 'levels'
+  | 'bohr'
+  | 'uncertainty'
+  | 'finitewell'
+  | 'step'
+  | 'delta'
+  | 'doublewell'
+  | 'molecular'
+  | 'angular'
+  | 'ladder'
+  | 'radial'
+  | 'resonance'
+  | 'linear'
+  | 'chain'
+  | 'stm'
 
 export interface BookFormula {
   math: string

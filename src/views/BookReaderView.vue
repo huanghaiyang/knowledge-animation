@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import BookLab from '../components/BookLab.vue'
 import FormulaBlock from '../components/FormulaBlock.vue'
-import { bookChapters, bookMeta, bookNeighbors, chapterOfSection, getBookSection } from '../data/book'
+import { bookChapters, bookMeta, bookNeighbors, chapterOfSection, getBookSection, labsForSection } from '../data/book'
 
 const props = defineProps<{
   sectionId: string
@@ -16,10 +16,21 @@ const emit = defineEmits<{
 const tab = ref<'notes' | 'lab'>('notes')
 const hintOpen = ref(false)
 const tocRef = ref<HTMLElement | null>(null)
+const activeLabIndex = ref(0)
 
 const section = computed(() => getBookSection(props.sectionId))
 const chapter = computed(() => chapterOfSection(props.sectionId))
 const neighbors = computed(() => bookNeighbors(props.sectionId))
+
+const sectionLabs = computed(() => labsForSection(props.sectionId))
+const activeLab = computed(() => sectionLabs.value[activeLabIndex.value] ?? sectionLabs.value[0])
+const labKey = computed(() => `${section.value.id}-${activeLabIndex.value}`)
+const chapterEntries = computed(() =>
+  chapter.value.sections.map((entry) => ({
+    ...entry,
+    labCount: labsForSection(entry.id).length
+  }))
+)
 
 const pad = (value: number | string) => String(value).padStart(2, '0')
 
@@ -39,6 +50,12 @@ function setTab(next: 'notes' | 'lab') {
   if (tab.value === next) return
   tab.value = next
   hintOpen.value = false
+  window.scrollTo({ top: 0, behavior: 'auto' })
+}
+
+function pickLab(index: number) {
+  if (activeLabIndex.value === index) return
+  activeLabIndex.value = index
   window.scrollTo({ top: 0, behavior: 'auto' })
 }
 
@@ -65,6 +82,7 @@ watch(
   () => {
     tab.value = 'notes'
     hintOpen.value = false
+    activeLabIndex.value = 0
     scrollActiveToc()
   }
 )
@@ -91,7 +109,7 @@ onMounted(scrollActiveToc)
         <div class="header-tools">
           <div class="mode-tabs">
             <button type="button" :class="{ active: tab === 'notes' }" @click="setTab('notes')">讲义</button>
-            <button type="button" :class="{ active: tab === 'lab' }" @click="setTab('lab')">本章实验室</button>
+            <button type="button" :class="{ active: tab === 'lab' }" @click="setTab('lab')">本节实验室</button>
           </div>
 
           <div class="pager">
@@ -242,20 +260,37 @@ onMounted(scrollActiveToc)
 
           <section v-else key="lab" class="lab-panel">
             <header class="lab-head">
-              <span class="mono">CHAPTER LAB · {{ pad(chapter.no) }}</span>
-              <h2>{{ chapter.title }} · 交互实验</h2>
+              <span class="mono">SECTION LAB · {{ section.no }}</span>
+              <h2>{{ section.title }} · 本节实验</h2>
               <p>
-                这一章的所有小节共享同一个场景。拖动参数、切换开关，看结论怎样随假设改变；场景可拖拽旋转，双击复位。
+                本节共 {{ sectionLabs.length }} 个专属实验。拖动参数、切换开关，看结论怎样随假设改变；场景可拖拽旋转，双击复位。
               </p>
             </header>
 
-            <BookLab :lab="chapter.lab" />
+            <div class="lab-picker">
+              <button
+                v-for="(entry, index) in sectionLabs"
+                :key="`${section.id}-${index}-${entry.title}`"
+                type="button"
+                class="lab-pick"
+                :class="{ active: index === activeLabIndex }"
+                @click="pickLab(index)"
+              >
+                <span class="mono lab-pick-no">{{ pad(index + 1) }}</span>
+                <span class="lab-pick-body">
+                  <strong>{{ entry.title }}</strong>
+                  <span>{{ entry.caption }}</span>
+                </span>
+              </button>
+            </div>
+
+            <BookLab :key="labKey" :lab="activeLab" />
 
             <div class="lab-links">
-              <span class="mono lab-links-title">配套小节</span>
+              <span class="mono lab-links-title">本章各节实验</span>
               <div class="lab-section-list">
                 <button
-                  v-for="entry in chapter.sections"
+                  v-for="entry in chapterEntries"
                   :key="entry.id"
                   type="button"
                   :class="{ active: entry.id === section.id }"
@@ -263,6 +298,7 @@ onMounted(scrollActiveToc)
                 >
                   <span class="mono">{{ entry.no }}</span>
                   <span>{{ entry.title }}</span>
+                  <span class="mono lab-count">{{ entry.labCount }} 个实验</span>
                 </button>
               </div>
             </div>
@@ -930,6 +966,75 @@ onMounted(scrollActiveToc)
   color: var(--muted);
 }
 
+.lab-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.lab-pick {
+  display: flex;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid rgba(150, 179, 212, 0.12);
+  border-radius: 11px;
+  text-align: left;
+  background: rgba(6, 11, 18, 0.6);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.lab-pick:hover {
+  border-color: rgba(116, 240, 194, 0.28);
+}
+
+.lab-pick.active {
+  border-color: rgba(116, 240, 194, 0.4);
+  background:
+    radial-gradient(120% 130% at 0% 0%, rgba(116, 240, 194, 0.08), transparent 62%),
+    rgba(6, 13, 16, 0.75);
+}
+
+.lab-pick-no {
+  flex: none;
+  padding-top: 2px;
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: rgba(150, 179, 212, 0.42);
+}
+
+.lab-pick.active .lab-pick-no {
+  color: var(--mint);
+}
+
+.lab-pick-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lab-pick-body strong {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-dim);
+}
+
+.lab-pick.active .lab-pick-body strong {
+  color: #e8fbf4;
+}
+
+.lab-pick-body span {
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--faint);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .lab-links {
   margin-top: 22px;
   padding: 16px 18px;
@@ -967,6 +1072,13 @@ onMounted(scrollActiveToc)
 .lab-section-list button .mono {
   font-size: 8px;
   color: var(--faint);
+}
+
+.lab-section-list .lab-count {
+  padding-left: 7px;
+  border-left: 1px solid rgba(150, 179, 212, 0.14);
+  font-size: 7.5px;
+  letter-spacing: 0.04em;
 }
 
 .lab-section-list button:hover {
@@ -1127,6 +1239,10 @@ onMounted(scrollActiveToc)
 
   .lab-head h2 {
     font-size: 23px;
+  }
+
+  .lab-picker {
+    grid-template-columns: 1fr;
   }
 }
 </style>

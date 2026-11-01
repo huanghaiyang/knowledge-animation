@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { bookChapters, bookMeta } from '../data/book'
+import { allBookSections, bookChapters, bookMeta, labsForSection } from '../data/book'
 
 const emit = defineEmits<{
   back: []
@@ -7,6 +7,7 @@ const emit = defineEmits<{
 }>()
 
 const pad = (value: number) => String(value).padStart(2, '0')
+const labCount = allBookSections.reduce((sum, section) => sum + labsForSection(section.id).length, 0)
 
 function firstSectionId() {
   return bookChapters[0]?.sections[0]?.id ?? 'qm-1-1'
@@ -89,7 +90,7 @@ function scrollToChapters() {
                 <span>页原书</span>
               </div>
               <div>
-                <strong class="mono">{{ pad(bookMeta.chapterCount) }}</strong>
+                <strong class="mono">{{ labCount }}</strong>
                 <span>个交互实验</span>
               </div>
             </div>
