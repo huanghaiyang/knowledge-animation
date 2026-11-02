@@ -111,7 +111,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'spectrum',
       title: '黑体谱：温度决定颜色',
       caption:
-        '普朗克把谐振子能量切成 hν 的整数倍，才把紫外灾难截断。温度升高时，整条谱线抬高，峰值向短波移动。',
+        '普朗克把谐振子能量切成 $h\\nu$ 的整数倍，才把紫外灾难截断。温度升高时，整条谱线抬高，峰值向短波移动。',
       controls: [c('T', '温度 T', 1000, 6000, 50, 3000, (v) => `${Math.round(v)} K`)],
       toggles: [
         t('rayleigh', '瑞利—金斯曲线', '经典理论：长波吻合，短波发散'),
@@ -178,9 +178,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
     },
     {
       mode: 'operator',
-      title: '光子动量：p = h / λ',
+      title: '光子动量：$p=h/\\lambda$',
       caption:
-        '光子不仅带能量，也带动量。把光子写成平面波 e^{ikx}，动量算符作用后给出本征值 p = ħk。',
+        '光子不仅带能量，也带动量。把光子写成平面波 $e^{ikx}$，动量算符作用后给出本征值 $p=\\hbar k$。',
       controls: [c('k', '波数 k', 0.6, 2.6, 0.02, 1.7, f2)],
       toggles: [
         t('complex', '复平面螺旋', '把实部与虚部展开'),
@@ -242,7 +242,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'duality',
       title: '电子衍射：物质波的确凿证据',
       caption:
-        '德布罗意把 p = h/λ 反过来用在电子上：晶格就是天然的雙缝，衍射环就是波动性的签名。',
+        '德布罗意把 $p=h/\\lambda$ 反过来用在电子上：晶格就是天然的雙缝，衍射环就是波动性的签名。',
       controls: [
         c('d', '等效缝距 d', 0.2, 1, 0.02, 0.35, f2),
         c('lambda', '电子波长 λ', 380, 750, 1, 532, int)
@@ -261,7 +261,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'wavepacket',
       title: '物质波的群速度',
       caption:
-        '平面波以相速度移动，波包以群速度移动。对自由粒子，群速度正是经典速度 v = p/m。',
+        '平面波以相速度移动，波包以群速度移动。对自由粒子，群速度正是经典速度 $v=p/m$。',
       controls: [
         c('k0', '中心波数 k₀', 1, 4, 0.05, 2.4, f2),
         c('sigma0', '波包宽度 σ₀', 0.4, 1.4, 0.02, 0.9, f2)
@@ -283,7 +283,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'uncertainty',
       title: '波函数的概率解释',
       caption:
-        'ψ 本身不能直接测量，可测的是 |ψ|²。把位置波包压得越窄，动量空间的分布就被撑得越宽。',
+        'ψ 本身不能直接测量，可测的是 $|\\psi|^2$。把位置波包压得越窄，动量空间的分布就被撑得越宽。',
       controls: [c('sigma', '位置宽度 σ', 0.25, 1.6, 0.02, 0.6, f2)],
       toggles: [t('density', '位置概率密度', '显示 |ψ(x)|²'), t('momentum', '动量空间分布', '显示 φ(p) 的宽度')],
       readouts: [
@@ -318,7 +318,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-2-2': [
     {
       mode: 'wavepacket',
-      title: '自由粒子与 e^{i(kx−ωt)}',
+      title: '自由粒子与 $e^{i(kx-\\omega t)}$',
       caption:
         '自由粒子的定态是平面波。把许多平面波叠加成波包，才得到一个“像粒子”的局域对象。',
       controls: [
@@ -357,7 +357,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'wavepacket',
       title: '束缚态的叠加与拍频',
       caption:
-        '两个本征态叠加时，相对相位 e^{i(E₂−E₁)t/ħ} 会让概率密度来回拍动。拍频就是能级差。',
+        '两个本征态叠加时，相对相位 $e^{i(E_2-E_1)t/\\hbar}$ 会让概率密度来回拍动。拍频就是能级差。',
       controls: [
         c('k0', '中心波数 k₀', 1, 4, 0.05, 2.1, f2),
         c('sigma0', '波包宽度 σ₀', 0.4, 1.4, 0.02, 0.85, f2)
@@ -416,7 +416,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'ladder',
       title: '离散能级是边界条件的结果',
       caption:
-        '以谐振子为例：升阶算符每作用一次，能量就加一个 ħω。能级等间距，是代数结构最干净的一类离散谱。',
+        '以谐振子为例：升阶算符每作用一次，能量就加一个 $\\hbar\\omega$。能级等间距，是代数结构最干净的一类离散谱。',
       controls: [c('n', '能级 n', 0, 6, 1, 2, int)],
       toggles: [t('raise', '升阶算符 a†', '让光点从 n 跳到 n+1'), t('labels', '能级标签', '显示 n = 0 … 7')],
       readouts: [
@@ -434,9 +434,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-3-1': [
     {
       mode: 'well',
-      title: '盒中粒子：驻波与 n² 能级',
+      title: '盒中粒子：驻波与 $n^2$ 能级',
       caption:
-        '把粒子关进宽度 L 的盒子，边界要求 ψ 在两端为零，只剩半波长整数倍的驻波。能级按 n² 上升，基态能量并不为零。',
+        '把粒子关进宽度 L 的盒子，边界要求 ψ 在两端为零，只剩半波长整数倍的驻波。能级按 $n^2$ 上升，基态能量并不为零。',
       controls: [
         c('n', '量子数 n', 1, 6, 1, 2, int),
         c('mix', '叠加权重', 0, 1, 0.02, 0.35, f2)
@@ -456,9 +456,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
     },
     {
       mode: 'levels',
-      title: 'n² 能级与间距律',
+      title: '$n^2$ 能级与间距律',
       caption:
-        '盒中粒子的能级按 n² 上升，越往上间距越大。把间距指数调到接近 1，谱线就收拢成谐振子那样的等间距阶梯。',
+        '盒中粒子的能级按 $n^2$ 上升，越往上间距越大。把间距指数调到接近 1，谱线就收拢成谐振子那样的等间距阶梯。',
       controls: [
         c('n', '量子数 n', 1, 8, 1, 3, int),
         c('law', '间距指数 p', 1, 2.4, 0.05, 2, f2),
@@ -610,7 +610,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'tunneling',
       title: '近垒顶：透射并非突然打开',
       caption:
-        '即使 E<V₀，势垒越薄、越接近垒顶，透射振幅就越大。E→V₀ 时垒内衰减变得极慢，隧穿概率迅速上升。',
+        '即使 $E<V_0$，势垒越薄、越接近垒顶，透射振幅就越大。$E\\to V_0$ 时垒内衰减变得极慢，隧穿概率迅速上升。',
       controls: [
         c('width', '势垒宽度 a', 0.2, 1.4, 0.02, 0.4, f2),
         c('ratio', '能量比 E/V₀', 0.15, 0.95, 0.01, 0.9, f2)
@@ -631,7 +631,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'tunneling',
       title: '深垒：宽度每增一点，透射就塌一截',
       caption:
-        '势垒内的波函数按 e^{−κx} 衰减。垒越宽、能量越低，κ 越大，穿过后的振幅被指数压低——这就是隧穿对尺寸的极端敏感。',
+        '势垒内的波函数按 $e^{-\\kappa x}$ 衰减。垒越宽、能量越低，κ 越大，穿过后的振幅被指数压低——这就是隧穿对尺寸的极端敏感。',
       controls: [
         c('width', '势垒宽度 a', 0.2, 1.4, 0.02, 1.3, f2),
         c('ratio', '能量比 E/V₀', 0.15, 0.95, 0.01, 0.3, f2)
@@ -669,9 +669,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-3-6': [
     {
       mode: 'delta',
-      title: 'δ 势阱：唯一束缚态',
+      title: '$\\delta$ 势阱：唯一束缚态',
       caption:
-        '强度可调的 δ 势阱只有一个束缚态，波函数按 e^{−κ|x|} 从中心向两侧衰减。势阱越强，κ 越大，态被压得越紧。',
+        '强度可调的 δ 势阱只有一个束缚态，波函数按 $e^{-\\kappa|x|}$ 从中心向两侧衰减。势阱越强，κ 越大，态被压得越紧。',
       controls: [
         c('strength', '势阱强度', 0.2, 1.6, 0.02, 1, f2),
         c('energy', '散射能量', 0.2, 1.4, 0.02, 0.6, f2)
@@ -688,9 +688,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
     },
     {
       mode: 'delta',
-      title: 'δ 势垒：散射相移',
+      title: '$\\delta$ 势垒：散射相移',
       caption:
-        '同一个 δ 函数改成排斥势时不再有束缚态，只剩散射态：波函数在 x = 0 处出现相位跳变，反射概率随能量变化。',
+        '同一个 δ 函数改成排斥势时不再有束缚态，只剩散射态：波函数在 $x=0$ 处出现相位跳变，反射概率随能量变化。',
       controls: [
         c('strength', '势垒强度', 0.2, 1.6, 0.02, 0.8, f2),
         c('energy', '入射能量 E', 0.2, 1.4, 0.02, 0.8, f2)
@@ -721,7 +721,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'resonance',
       title: '量子共振腔：驱动频率扫过本征模',
       caption:
-        '腔只对特定频率强烈响应。把驱动频率 ω 扫过 ωₙ = 0.14n²，响应曲线出现一串峰；阻尼 γ 决定峰的宽度。',
+        '腔只对特定频率强烈响应。把驱动频率 ω 扫过 $\\omega_n=0.14n^2$，响应曲线出现一串峰；阻尼 γ 决定峰的宽度。',
       controls: [
         c('omega', '驱动频率 ω', 0.2, 2.4, 0.02, 1.26, f2),
         c('gamma', '阻尼 γ', 0.02, 0.25, 0.01, 0.08, f2)
@@ -761,7 +761,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'linear',
       title: '线性势：电子在电场中加速',
       caption:
-        '均匀电场给出 V = −eℰx。波函数在经典转折点外侧指数衰减，在另一侧变成 Airy 振荡；场强越强，转折点越靠里。',
+        '均匀电场给出 $V=-e\\mathcal{E}x$。波函数在经典转折点外侧指数衰减，在另一侧变成 Airy 振荡；场强越强，转折点越靠里。',
       controls: [
         c('field', '电场强度 ℰ', 0.4, 1.6, 0.02, 1, f2),
         c('energy', '电子能量 E', 0.2, 1.6, 0.02, 0.6, f2)
@@ -859,7 +859,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'doublewell',
       title: '高势垒：能级几乎简并，隧穿极慢',
       caption:
-        '势垒越高，两阱越接近独立，分裂 ΔE 指数变小。粒子仍会在两阱之间往返，但周期长得惊人。',
+        '势垒越高，两阱越接近独立，分裂 $\\Delta E$ 指数变小。粒子仍会在两阱之间往返，但周期长得惊人。',
       controls: [c('barrier', '势垒高度 V_b', 0.2, 1.4, 0.02, 1.2, f2)],
       toggles: [t('antisymmetric', '奇态 ψ₋', '显示分裂后的另一条能级'), t('density', '概率密度', '显示 |ψ|² 的包络')],
       readouts: [
@@ -896,7 +896,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'molecular',
       title: 'Pöschl-Teller 势：光滑得没有反射',
       caption:
-        'sech² 势阱光滑、无尖角，波函数在阱内几乎不反射。它的能谱可以精确求出，是少数“完全可解”的光滑势场。',
+        '$\\mathrm{sech}^2$ 势阱光滑、无尖角，波函数在阱内几乎不反射。它的能谱可以精确求出，是少数“完全可解”的光滑势场。',
       controls: [
         c('type', '势场类型', 0, 3, 1, 3, int),
         c('depth', '阱深', 0.5, 1.4, 0.02, 1, f2),
@@ -920,7 +920,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'step',
       title: '光滑台阶为什么仍然反射',
       caption:
-        '把 tanh 台阶调得很光滑：反射确实变小，却不会像 sech² 势那样严格为零。平滑只压低反射，不能消除反射。',
+        '把 tanh 台阶调得很光滑：反射确实变小，却不会像 $\\mathrm{sech}^2$ 势那样严格为零。平滑只压低反射，不能消除反射。',
       controls: [
         c('ratio', '能量比 E/V₀', 0.2, 1.8, 0.02, 1.2, f2),
         c('smooth', '台阶光滑度', 0, 0.8, 0.02, 0.5, f2)
@@ -1109,7 +1109,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'oscillator',
       title: '谐振子：等间距能级与厄米多项式',
       caption:
-        '抛物线势阱里的能级严格等间距，波函数是高斯乘以厄米多项式。n 每加一，能量加一个 ħω，节点也多一个。',
+        '抛物线势阱里的能级严格等间距，波函数是高斯乘以厄米多项式。n 每加一，能量加一个 $\\hbar\\omega$，节点也多一个。',
       controls: [c('n', '量子数 n', 0, 7, 1, 3, int)],
       toggles: [t('density', '概率密度', '显示 |ψₙ|²'), t('classical', '经典转折点', '标出 |x| = x_t')],
       readouts: [
@@ -1123,9 +1123,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
     },
     {
       mode: 'ladder',
-      title: '升阶算符 a†：每次加一个 ħω',
+      title: '升阶算符 $a^\\dagger$：每次加一个 $\\hbar\\omega$',
       caption:
-        'a† 把 |n⟩ 变成 |n+1⟩，系数是 √(n+1)。从基态出发反复作用，就能搭出整座等间距能级阶梯。',
+        '$a^\\dagger$ 把 $|n\\rangle$ 变成 $|n+1\\rangle$，系数是 $\\sqrt{n+1}$。从基态出发反复作用，就能搭出整座等间距能级阶梯。',
       controls: [c('n', '能级 n', 0, 6, 1, 3, int)],
       toggles: [t('raise', '升阶算符 a†', '让光点从 n 跳到 n+1'), t('labels', '能级标签', '显示 n = 0 … 7')],
       readouts: [
@@ -1159,7 +1159,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'coherent',
       title: '相干态：最像经典的量子态',
       caption:
-        '相干态是高斯波包，既不扩散也不变形，只沿经典轨道整体摆动。它的平均位置正好跟着 A cos ωt 走。',
+        '相干态是高斯波包，既不扩散也不变形，只沿经典轨道整体摆动。它的平均位置正好跟着 $A\\cos\\omega t$ 走。',
       controls: [
         c('amp', '振幅 A', 0.4, 2.6, 0.02, 1.4, f2),
         c('speed', '演化速度', 0.2, 2, 0.02, 1, f2)
@@ -1196,7 +1196,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'ladder',
       title: '代数解：从基态生成所有本征态',
       caption:
-        '不必解微分方程：从 a|0⟩ = 0 出发，反复用 a† 作用，就得到全部 |n⟩。归一化因子正是 √n!。',
+        '不必解微分方程：从 $a|0\\rangle=0$ 出发，反复用 $a^\\dagger$ 作用，就得到全部 $|n\\rangle$。归一化因子正是 $\\sqrt{n!}$。',
       controls: [c('n', '目标能级 n', 0, 6, 1, 2, int)],
       toggles: [t('raise', '升阶算符 a†', '演示一次升阶'), t('labels', '能级标签', '显示 n = 0 … 7')],
       readouts: [
@@ -1214,7 +1214,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'ladder',
       title: '降阶算符把能级打到底',
       caption:
-        'a|n⟩ = √n |n−1⟩，作用 n 次就回到 |0⟩；再作用一次得到零。能谱必须有下界，正是这个代数事实。',
+        '$a|n\\rangle=\\sqrt{n}\\,|n-1\\rangle$，作用 n 次就回到 $|0\\rangle$；再作用一次得到零。能谱必须有下界，正是这个代数事实。',
       controls: [c('n', '起始能级 n', 0, 6, 1, 0, int)],
       toggles: [t('raise', '升阶算符 a†', '切换为升阶演示'), t('labels', '能级标签', '显示 n = 0 … 7')],
       readouts: [
@@ -1232,7 +1232,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'oscillator',
       title: '基态不是“静止”',
       caption:
-        'n = 0 的波函数是一个高斯包，能量是 ½ħω，而不是零。位置与动量的不确定性之和，注定给基态留下零点能。',
+        '$n=0$ 的波函数是一个高斯包，能量是 $\\frac{1}{2}\\hbar\\omega$，而不是零。位置与动量的不确定性之和，注定给基态留下零点能。',
       controls: [c('n', '量子数 n', 0, 7, 1, 0, int)],
       toggles: [t('density', '概率密度', '显示 |ψ₀|²'), t('classical', '经典转折点', '标出 |x| = x_t')],
       readouts: [
@@ -1252,7 +1252,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'molecular',
       title: 'Lennard-Jones 12-6 势：惰性气体分子',
       caption:
-        'LJ 势用 −1/r⁶ 描述吸引、用 1/r¹² 描述排斥。势阱底附近近似抛物线，振动能级近似等间距；往上能级逐渐变密。',
+        'LJ 势用 $-1/r^6$ 描述吸引、用 $1/r^{12}$ 描述排斥。势阱底附近近似抛物线，振动能级近似等间距；往上能级逐渐变密。',
       controls: [
         c('type', '势场类型', 0, 3, 1, 0, int),
         c('depth', '阱深', 0.5, 1.4, 0.02, 0.9, f2),
@@ -1293,7 +1293,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'molecular',
       title: '莫尔斯势：双原子分子的非谐谱',
       caption:
-        '莫尔斯势在 r→∞ 时趋于零，天然描述分子解离。它的能级间距随 v 递减，谱线越往上越密，最后并入连续谱。',
+        '莫尔斯势在 $r\\to\\infty$ 时趋于零，天然描述分子解离。它的能级间距随 v 递减，谱线越往上越密，最后并入连续谱。',
       controls: [
         c('type', '势场类型', 0, 3, 1, 1, int),
         c('depth', '解离能 D_e', 0.5, 1.4, 0.02, 1, f2),
@@ -1335,9 +1335,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-6-3': [
     {
       mode: 'molecular',
-      title: 'Pöschl-Teller 势阱：sech² 能谱',
+      title: 'Pöschl-Teller 势阱：$\\mathrm{sech}^2$ 能谱',
       caption:
-        'sech² 阱是莫尔斯势的近亲：光滑、可精确求解，能级同样向上变密。它的阱底近似谐振子，高激发态则明显非谐。',
+        '$\\mathrm{sech}^2$ 阱是莫尔斯势的近亲：光滑、可精确求解，能级同样向上变密。它的阱底近似谐振子，高激发态则明显非谐。',
       controls: [
         c('type', '势场类型', 0, 3, 1, 3, int),
         c('depth', '阱深', 0.5, 1.4, 0.02, 1, f2),
@@ -1360,7 +1360,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'oscillator',
       title: 'PT 阱底的近谐振子行为',
       caption:
-        '把 sech² 阱在底部展开，领头项仍是抛物线。最低几级几乎等间距，这解释了为什么分子振动常被当作谐振子处理。',
+        '把 $\\mathrm{sech}^2$ 阱在底部展开，领头项仍是抛物线。最低几级几乎等间距，这解释了为什么分子振动常被当作谐振子处理。',
       controls: [c('n', '振动量子数 n', 0, 7, 1, 2, int)],
       toggles: [t('density', '概率密度', '显示 |ψₙ|²'), t('classical', '经典转折点', '标出 |x| = x_t')],
       readouts: [
@@ -1452,9 +1452,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-7-1': [
     {
       mode: 'operator',
-      title: '动量算符：−iħ∂/∂x 的本征值',
+      title: '动量算符：$-i\\hbar\\partial/\\partial x$ 的本征值',
       caption:
-        '动量算符是 −iħ∂/∂x。作用在平面波 e^{ikx} 上，它只把波函数乘上一个数 ħk——这就是本征值方程。',
+        '动量算符是 $-i\\hbar\\partial/\\partial x$。作用在平面波 $e^{ikx}$ 上，它只把波函数乘上一个数 $\\hbar k$——这就是本征值方程。',
       controls: [c('k', '波数 k', 0.6, 2.6, 0.02, 1.6, f2)],
       toggles: [t('complex', '复平面', '把实部与虚部画成三维螺旋'), t('arrow', '动量箭头', '标出 p = ħk 的方向与大小')],
       readouts: [
@@ -1470,7 +1470,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'ladder',
       title: '算符代数：a 与 a† 不是厄米算符',
       caption:
-        '升降算符互为厄米伴，却不是厄米算符，所以它们没有实本征值。真正有物理意义的是组合出来的 a†a = N。',
+        '升降算符互为厄米伴，却不是厄米算符，所以它们没有实本征值。真正有物理意义的是组合出来的 $a^\\dagger a=N$。',
       controls: [c('n', '能级 n', 0, 6, 1, 2, int)],
       toggles: [t('raise', '升阶算符 a†', '演示一次升阶'), t('labels', '能级标签', '显示 n = 0 … 7')],
       readouts: [
@@ -1488,7 +1488,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'operator',
       title: '厄米算符：本征值一定是实数',
       caption:
-        '动量算符满足 p̂† = p̂，所以它的本征值 ħk 是实数。任何可观测量的算符都必须是厄米的。',
+        '动量算符满足 $\\hat p^\\dagger=\\hat p$，所以它的本征值 $\\hbar k$ 是实数。任何可观测量的算符都必须是厄米的。',
       controls: [c('k', '波数 k', 0.6, 2.6, 0.02, 1.6, f2)],
       toggles: [t('complex', '复平面', '显示复相位'), t('arrow', '动量箭头', '标出 p = ħk')],
       readouts: [
@@ -1526,7 +1526,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'operator',
       title: '平面波：连续谱的本征函数',
       caption:
-        '平面波 e^{ikx} 是动量算符的本征态，但它在全空间不平方可积。连续谱本征函数只能做 δ 函数归一化。',
+        '平面波 $e^{ikx}$ 是动量算符的本征态，但它在全空间不平方可积。连续谱本征函数只能做 δ 函数归一化。',
       controls: [c('k', '波数 k', 0.6, 2.6, 0.02, 2.2, f2)],
       toggles: [t('complex', '复平面', '展开虚部，看行波'), t('arrow', '动量箭头', '标出传播方向')],
       readouts: [
@@ -1563,7 +1563,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'chain',
       title: '箱归一化：L→∞ 时离散谱变连续',
       caption:
-        '把空间装进长度 L 的箱子，动量只能取 2πħ/L 的整数倍。箱子越大，动量谱越密；L→∞ 时离散谱就连续了。',
+        '把空间装进长度 L 的箱子，动量只能取 $2\\pi\\hbar/L$ 的整数倍。箱子越大，动量谱越密；$L\\to\\infty$ 时离散谱就连续了。',
       controls: [c('segments', '箱子尺度 N', 2, 14, 1, 10, int)],
       toggles: [t('labels', 'HOMO/LUMO 标签', '标出最高占据与最低空轨道'), t('gap', '能隙标记', '画出相邻能级间距')],
       readouts: [
@@ -1583,7 +1583,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'operator',
       title: '箱中的动量本征态',
       caption:
-        '箱归一化以后，动量本征态可以写成 e^{ikx} 并满足周期边界。k 取离散值，归一化常数有了明确含义。',
+        '箱归一化以后，动量本征态可以写成 $e^{ikx}$ 并满足周期边界。k 取离散值，归一化常数有了明确含义。',
       controls: [c('k', '波数 k', 0.6, 2.6, 0.02, 2, f2)],
       toggles: [t('complex', '复平面', '显示复相位'), t('arrow', '动量箭头', '标出 p = ħk')],
       readouts: [
@@ -1599,9 +1599,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
   'qm-7-5': [
     {
       mode: 'angular',
-      title: '角动量本征态：|l,m⟩ 的球谐形状',
+      title: '角动量本征态：$|l,m\\rangle$ 的球谐形状',
       caption:
-        'L̂² 与 L̂z 共同的本征态是球谐函数 Yₗₘ。l 决定总角动量，m 决定它在 z 轴上的投影，形状随之改变。',
+        '$\\hat L^2$ 与 $\\hat L_z$ 共同的本征态是球谐函数 $Y_{lm}$。l 决定总角动量，m 决定它在 z 轴上的投影，形状随之改变。',
       controls: [
         c('l', '角量子数 l', 0, 3, 1, 2, int),
         c('m', '磁量子数 m', -3, 3, 1, 0, int)
@@ -1620,7 +1620,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'ladder',
       title: '角动量的升降算符 L±',
       caption:
-        'L± = Lx ± iLy 把 m 改变一个单位，却不改变 l。它与谐振子的 a† 是同一套代数，只是标签换成了角动量。',
+        '$L_\\pm=L_x\\pm iL_y$ 把 m 改变一个单位，却不改变 l。它与谐振子的 $a^\\dagger$ 是同一套代数，只是标签换成了角动量。',
       controls: [c('n', '磁量子数 m', 0, 6, 1, 2, int)],
       toggles: [t('raise', '升阶算符 L₊', '演示一次 m → m+1'), t('labels', 'm 标签', '显示 m = 0 … 7')],
       readouts: [
@@ -1640,7 +1640,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'radial',
       title: '球坐标：径向与角向分离',
       caption:
-        '中心势问题可以分离变量：ψ = R(r) Yₗₘ(θ,φ)。径向部分决定电子离核多远，角向部分决定电子云的朝向。',
+        '中心势问题可以分离变量：$\\psi=R(r)\\,Y_{lm}(\\theta,\\varphi)$。径向部分决定电子离核多远，角向部分决定电子云的朝向。',
       controls: [
         c('n', '主量子数 n', 1, 4, 1, 2, int),
         c('l', '角量子数 l', 0, 2, 1, 1, int)
@@ -1659,7 +1659,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'angular',
       title: '球谐函数：角向解的全部内容',
       caption:
-        '角向方程的解是球谐函数 Yₗₘ。l 固定时 m 只能取 −l…l，共 2l+1 个朝向；它们是 L̂² 与 L̂z 的共同本征态。',
+        '角向方程的解是球谐函数 $Y_{lm}$。l 固定时 m 只能取 $-l\\ldots l$，共 $2l+1$ 个朝向；它们是 $\\hat L^2$ 与 $\\hat L_z$ 的共同本征态。',
       controls: [
         c('l', '角量子数 l', 0, 3, 1, 1, int),
         c('m', '磁量子数 m', -3, 3, 1, 0, int)
@@ -1680,7 +1680,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'angular',
       title: '连带勒让德函数与电子云形状',
       caption:
-        '极角方向的解是连带勒让德函数 Pₗᵐ(cos θ)。|m| 越大，电子云越贴近赤道面；m = 0 时沿 z 轴伸展开。',
+        '极角方向的解是连带勒让德函数 $P_l^m(\\cos\\theta)$。$|m|$ 越大，电子云越贴近赤道面；$m=0$ 时沿 z 轴伸展开。',
       controls: [
         c('l', '角量子数 l', 0, 3, 1, 2, int),
         c('m', '磁量子数 m', -3, 3, 1, 1, int)
@@ -1738,9 +1738,9 @@ export const sectionLabMap: Record<string, BookLab[]> = {
     },
     {
       mode: 'hydrogen',
-      title: '径向概率密度 r²R²',
+      title: '径向概率密度 $r^2R^2$',
       caption:
-        '真正决定“电子离核多远”的是 r²R²，而不是 R² 本身。球壳体积因子 r² 把概率峰推向更大的半径。',
+        '真正决定“电子离核多远”的是 $r^2R^2$，而不是 $R^2$ 本身。球壳体积因子 $r^2$ 把概率峰推向更大的半径。',
       controls: [
         c('n', '主量子数 n', 1, 3, 1, 2, int),
         c('l', '角量子数 l', 0, 2, 1, 1, int),
@@ -1762,7 +1762,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'hydrogen',
       title: '完整本征函数与电子云',
       caption:
-        '把径向与角向乘起来，得到完整本征函数 ψₙₗₘ。|ψ|² 才是电子云；不同 m 的云形状不同，但能量完全相同。',
+        '把径向与角向乘起来，得到完整本征函数 $\\psi_{nlm}$。$|\\psi|^2$ 才是电子云；不同 m 的云形状不同，但能量完全相同。',
       controls: [
         c('n', '主量子数 n', 1, 3, 1, 2, int),
         c('l', '角量子数 l', 0, 2, 1, 0, int),
@@ -1782,7 +1782,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'radial',
       title: '正交归一：径向函数的检查',
       caption:
-        '不同 n 的径向函数带不同权重的 r²，在 0 到 ∞ 上彼此正交。归一化条件则保证总概率为 1。',
+        '不同 n 的径向函数带不同权重的 $r^2$，在 0 到 ∞ 上彼此正交。归一化条件则保证总概率为 1。',
       controls: [
         c('n', '主量子数 n', 1, 4, 1, 3, int),
         c('l', '角量子数 l', 0, 2, 1, 1, int)
@@ -1803,7 +1803,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'hydrogen',
       title: '氢原子：能级、简并与电子云',
       caption:
-        '氢原子能级只依赖主量子数 n：Eₙ = −13.6/n² eV。同一 n 下的 l、m 全部简并，电子云形状却各不相同。',
+        '氢原子能级只依赖主量子数 n：$E_n=-13.6/n^2\\,\\mathrm{eV}$。同一 n 下的 l、m 全部简并，电子云形状却各不相同。',
       controls: [
         c('n', '主量子数 n', 1, 3, 1, 3, int),
         c('l', '角量子数 l', 0, 2, 1, 2, int),
@@ -1823,7 +1823,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'bohr',
       title: '巴尔末系：n→2 的谱线',
       caption:
-        '电子从高能级跳回 n = 2，发出可见光。4→2 是 486 nm 的青蓝线，3→2 是 656 nm 的红线，5→2 更靠蓝。',
+        '电子从高能级跳回 $n=2$，发出可见光。$4\\to 2$ 是 486 nm 的青蓝线，$3\\to 2$ 是 656 nm 的红线，$5\\to 2$ 更靠蓝。',
       controls: [
         c('ni', '初态 nᵢ', 2, 6, 1, 4, int),
         c('nf', '末态 n_f', 1, 5, 1, 2, int)
@@ -1844,7 +1844,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'radial',
       title: 'l=0：回到一维势阱',
       caption:
-        '无限深球形势阱在 l = 0 时没有离心势。把 u(r) = rR(r) 代进去，方程与一维盒中粒子完全相同。',
+        '无限深球形势阱在 $l=0$ 时没有离心势。把 $u(r)=rR(r)$ 代进去，方程与一维盒中粒子完全相同。',
       controls: [
         c('n', '主量子数 n', 1, 4, 1, 2, int),
         c('l', '角量子数 l', 0, 2, 1, 0, int)
@@ -1863,7 +1863,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'angular',
       title: 'l>0：离心势与角向节点',
       caption:
-        'l > 0 时角向动能变成离心势 l(l+1)/r²，把径向波函数从原点推开。能级因此抬高，电子云出现角向节点。',
+        '$l>0$ 时角向动能变成离心势 $l(l+1)/r^2$，把径向波函数从原点推开。能级因此抬高，电子云出现角向节点。',
       controls: [
         c('l', '角量子数 l', 0, 3, 1, 2, int),
         c('m', '磁量子数 m', -3, 3, 1, 0, int)
@@ -1925,7 +1925,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'molecular',
       title: 'Kratzer 势：振动–转动能级',
       caption:
-        'Kratzer 势把库仑型的 1/r 吸引和 1/r² 离心项合在一起，正好描述双原子分子的振动–转动。能级同时带振动与转动指标。',
+        'Kratzer 势把库仑型的 $1/r$ 吸引和 $1/r^2$ 离心项合在一起，正好描述双原子分子的振动–转动。能级同时带振动与转动指标。',
       controls: [
         c('type', '势场类型', 0, 3, 1, 2, int),
         c('depth', '阱深', 0.5, 1.4, 0.02, 1, f2),
@@ -1948,7 +1948,7 @@ export const sectionLabMap: Record<string, BookLab[]> = {
       mode: 'angular',
       title: '转动能级与角向分布',
       caption:
-        '分子的转动由角动量量子数 l 描述，能量是 L²/2I = l(l+1)ħ²/2I。每个 l 有 2l+1 个取向，在外场中会分裂。',
+        '分子的转动由角动量量子数 l 描述，能量是 $L^2/2I=l(l+1)\\hbar^2/2I$。每个 l 有 $2l+1$ 个取向，在外场中会分裂。',
       controls: [
         c('l', '转动量子数 l', 0, 3, 1, 2, int),
         c('m', '磁量子数 m', -3, 3, 1, 1, int)

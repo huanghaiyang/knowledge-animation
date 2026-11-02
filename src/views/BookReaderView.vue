@@ -281,8 +281,8 @@ onMounted(scrollActiveToc)
               >
                 <span class="mono lab-pick-no">{{ pad(index + 1) }}</span>
                 <span class="lab-pick-body">
-                  <strong>{{ entry.title }}</strong>
-                  <span>{{ entry.caption }}</span>
+                  <strong><InlineMath :text="entry.title" /></strong>
+                  <span><InlineMath :text="entry.caption" /></span>
                 </span>
               </button>
             </div>
