@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import BookLab from '../components/BookLab.vue'
+import BookFigure from '../components/BookFigure.vue'
 import FormulaBlock from '../components/FormulaBlock.vue'
 import InlineMath from '../components/InlineMath.vue'
 import { bookChapters, bookMeta, bookNeighbors, chapterOfSection, getBookSection, labsForSection } from '../data/book'
+import { figuresForSection } from '../data/book/figures'
+import type { FigureSpec } from '../data/book/figures/types'
 
 const props = defineProps<{
   sectionId: string
@@ -34,6 +37,27 @@ const chapterEntries = computed(() =>
 )
 
 const pad = (value: number | string) => String(value).padStart(2, '0')
+
+/** 按“本节总览 → 各段插图 → 各公式插图”的阅读顺序统一编号。 */
+const figurePlan = computed(() => {
+  const set = figuresForSection(section.value.id)
+  let counter = 0
+  const nextLabel = () => `图 ${section.value.no}-${++counter}`
+  const overview = set?.overview ? { spec: set.overview, label: nextLabel() } : null
+  const paragraphs: Record<string, { spec: FigureSpec; label: string }> = {}
+  const formulas: Record<string, { spec: FigureSpec; label: string }> = {}
+  section.value.beats.forEach((beat, beatIndex) => {
+    beat.paragraphs.forEach((_, paragraphIndex) => {
+      const spec = set?.paragraphs?.[`${beatIndex}-${paragraphIndex}`]
+      if (spec) paragraphs[`${beatIndex}-${paragraphIndex}`] = { spec, label: nextLabel() }
+    })
+    beat.formulas?.forEach((_, formulaIndex) => {
+      const spec = set?.formulas?.[`${beatIndex}-${formulaIndex}`]
+      if (spec) formulas[`${beatIndex}-${formulaIndex}`] = { spec, label: nextLabel() }
+    })
+  })
+  return { overview, paragraphs, formulas, total: counter }
+})
 
 function goTo(sectionId: string) {
   if (sectionId === props.sectionId) {
@@ -198,6 +222,12 @@ onMounted(scrollActiveToc)
                   <p><InlineMath :text="idea" /></p>
                 </div>
               </div>
+
+              <BookFigure
+                v-if="figurePlan.overview"
+                :spec="figurePlan.overview.spec"
+                :label="figurePlan.overview.label"
+              />
             </header>
 
             <section
@@ -211,10 +241,24 @@ onMounted(scrollActiveToc)
               </header>
 
               <div class="beat-body">
-                <p v-for="(paragraph, pIndex) in beat.paragraphs" :key="pIndex">
-                  <InlineMath :text="paragraph" />
-                </p>
+                <template v-for="(paragraph, pIndex) in beat.paragraphs" :key="`p-${pIndex}`">
+                  <p><InlineMath :text="paragraph" /></p>
+                  <BookFigure
+                    v-if="figurePlan.paragraphs[`${index}-${pIndex}`]"
+                    :spec="figurePlan.paragraphs[`${index}-${pIndex}`].spec"
+                    :label="figurePlan.paragraphs[`${index}-${pIndex}`].label"
+                  />
+                </template>
                 <FormulaBlock v-if="beat.formulas?.length" :lines="beat.formulas" />
+                <div v-if="beat.formulas?.length" class="formula-figures">
+                  <template v-for="(_, fIndex) in beat.formulas" :key="`f-${fIndex}`">
+                    <BookFigure
+                      v-if="figurePlan.formulas[`${index}-${fIndex}`]"
+                      :spec="figurePlan.formulas[`${index}-${fIndex}`].spec"
+                      :label="figurePlan.formulas[`${index}-${fIndex}`].label"
+                    />
+                  </template>
+                </div>
                 <div v-if="beat.insight" class="insight">
                   <span class="mono">INSIGHT</span>
                   <p><InlineMath :text="beat.insight" /></p>
@@ -753,6 +797,12 @@ onMounted(scrollActiveToc)
 
 .beat-body :deep(.formula-block) {
   margin: 18px 0;
+}
+
+.formula-figures {
+  display: grid;
+  gap: 2px;
+  margin-top: 4px;
 }
 
 .insight {
